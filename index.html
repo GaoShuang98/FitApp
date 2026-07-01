@@ -615,7 +615,8 @@ async function ld(){
 }
 async function sd(d){
 	localStorage.setItem(SK,JSON.stringify(d));
-	const tk=getToken();if(!tk)return;
+	const tk=getToken();
+	if(!tk){syncToast('☁️ 未配置同步，数据仅保存在本地',false);updateSyncBtn();return}
 	try{
 		if(!_ghSha){try{const r=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json'}});if(r.ok){const j=await r.json();_ghSha=j.sha}}catch(e){}}
 		const body={message:'update data',content:b64e(JSON.stringify(d))};
