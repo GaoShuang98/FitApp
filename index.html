@@ -424,8 +424,8 @@ padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);
 <div class="side-ft">
 <div class="uinfo"><div class="uav">瑞</div><span>瑞典健康日志</span></div>
 <div class="sync-row" style="display:flex;align-items:center;gap:5px;margin-top:6px;font-size:10px;color:var(--t3)">
-<span id="syncDot" style="width:7px;height:7px;border-radius:50%;background:var(--t3);flex-shrink:0;transition:background 0.5s"></span>
-<span id="syncLabel">检测中…</span>
+<span id="syncDot" style="width:7px;height:7px;border-radius:50%;background:var(--cy);flex-shrink:0;transition:background 0.5s"></span>
+<span id="syncLabel">离线 (仅本地)</span>
 </div>
 <div class="theme-row" style="margin-top:6px;display:flex;gap:4px">
 <button class="tbtn active" data-t="dark" title="暗色模式">🌙</button>
@@ -542,7 +542,7 @@ function setSyncStatus(ok){
 async function ld(){
 	if(isZB()){
 		try{
-			const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),8000);
+			const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),5000);
 			const r=await fetch(ZB_URL+'/'+ZB_BIN_ID+'/latest',{headers:{'X-Master-Key':ZX},signal:ctrl.signal});
 			clearTimeout(tid);
 			if(r.ok){
@@ -564,7 +564,7 @@ async function sd(d){
 	localStorage.setItem(SK,JSON.stringify(d));
 	if(!isZB())return;
 	try{
-		const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),8000);
+		const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),5000);
 		const r=await fetch(ZB_URL+'/'+ZB_BIN_ID,{method:'PUT',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d),signal:ctrl.signal});
 		clearTimeout(tid);
 		if(r.ok)setSyncStatus(true);else setSyncStatus(false);
