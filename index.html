@@ -402,6 +402,7 @@ padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);
 <body>
 <div class="bg-wallpaper"></div>
 <div id="syncToast" style="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:99999;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:500;font-family:var(--f);opacity:0;transition:opacity 0.35s;pointer-events:none"></div>
+<div id="dayPopup" style="position:fixed;z-index:9998;background:rgba(26,26,36,0.97);backdrop-filter:blur(30px);border:1px solid var(--gb);border-radius:var(--r2);padding:14px 16px;font-size:12px;color:var(--t1);font-family:var(--f);box-shadow:var(--gsh-lift);opacity:0;transform:translate(-50%,-100%);pointer-events:none;transition:opacity 0.2s;max-width:220px;display:none"></div>
 <div class="login-overlay" id="loginOverlay">
 <div class="login-card">
 <div class="login-logo">🌙</div>
@@ -696,12 +697,29 @@ const mins=dayData[ds]||0;totalMin+=mins;
 let bg='var(--gls1)';let tip='';
 if(mins>0){if(mins<=15)bg='rgba(48,209,88,0.15)';else if(mins<=30)bg='rgba(48,209,88,0.3)';else if(mins<=60)bg='rgba(48,209,88,0.55)';else bg='var(--ex)';tip=ds+' : '+mins+'分钟'}
 if(!mins&&ds===todayStr)bg='var(--gls2)';
-r+='<td><div class="heatmap-cell" style="background:'+bg+'"'+(tip?' data-tip="'+tip+'"':'')+'></div></td>';
+		r+='<td><div class="heatmap-cell" style="background:'+bg+';cursor:pointer" data-date="'+ds+'" onclick="showDayDetail(event,\''+ds+'\')"'+(tip?' data-tip="'+tip+'"':'')+'></div></td>';
 }
 r+='</tr>';rows+=r;
 }
-body.innerHTML=monthRow+rows;total.textContent='总计 '+totalMin+' 分钟';
-}
+	body.innerHTML=monthRow+rows;total.textContent='总计 '+totalMin+' 分钟';
+	}
+	let _dayPopupTimer=0;
+	function showDayDetail(evt,ds){
+		const pop=document.getElementById('dayPopup');if(!pop)return;
+		const acts=D.ex.filter(e=>e.date===ds);
+		if(acts.length===0){pop.style.display='none';return}
+		let h='<div style="font-weight:560;margin-bottom:6px">📅 '+ds+'</div>';
+		acts.forEach(e=>{
+			h+='<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:11px">';
+			h+='<span>'+im[e.type]+'</span><span>'+(nm[e.type]||e.customName||'自定义')+'</span>';
+			h+='<span style="color:var(--ex);margin-left:auto">'+e.duration+'分</span></div>';
+		});
+		pop.innerHTML=h;pop.style.display='';
+		pop.style.left=evt.clientX+'px';pop.style.top=(evt.clientY-12)+'px';
+		pop.style.opacity='1';
+		clearTimeout(_dayPopupTimer);
+		_dayPopupTimer=setTimeout(()=>{pop.style.opacity='0';setTimeout(()=>{pop.style.display='none'},200)},2000);
+	}
 function re(){
 	document.getElementById('eddisp').textContent='📅 '+now();
 	document.getElementById('exDate').value=now();document.getElementById('exDur').value=30;
