@@ -451,7 +451,7 @@ padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);
 <div class="card">
 <h3 style="font-size:15px;font-weight:560;margin-bottom:14px">✏️ 添加运动</h3>
 <div class="fg"><label>日期</label><input type="date" class="fi" id="exDate"></div>
-<div class="fg"><label>类型</label><select class="fs" id="exType"><option value="running">🏃 跑步</option><option value="walking">🚶 散步</option><option value="yoga">🧘 瑜伽</option><option value="swimming">🏊 游泳</option><option value="cycling">🚴 骑行</option><option value="gym">🏋️ 力量</option><option value="dancing">💃 跳舞</option><option value="aerobic">🏋 跳操</option><option value="pilates">🤸 普拉提</option><option value="hiking">🥾 徒步</option><option value="jump_rope">🪢 跳绳</option><option value="rowing">🚣 划船</option><option value="badminton">🏸 羽毛球</option><option value="custom">📝 自定义</option></select><input type="text" class="fi" id="exCustom" placeholder="输入运动名称" style="display:none;margin-top:8px"></div>
+<div class="fg"><label>类型</label><select class="fs" id="exType"><option value="aerobic">🏋 跳操</option><option value="running">🏃 跑步</option><option value="pilates">🤸 普拉提</option><option value="walking">🚶 散步</option><option value="yoga">🧘 瑜伽</option><option value="swimming">🏊 游泳</option><option value="cycling">🚴 骑行</option><option value="gym">🏋️ 力量</option><option value="dancing">💃 跳舞</option><option value="hiking">🥾 徒步</option><option value="jump_rope">🪢 跳绳</option><option value="rowing">🚣 划船</option><option value="badminton">🏸 羽毛球</option><option value="custom">📝 自定义</option></select><input type="text" class="fi" id="exCustom" placeholder="输入运动名称" style="display:none;margin-top:8px"></div>
 <div class="fg"><label>时长（分钟）</label><input type="number" class="fi" id="exDur" min="1" max="300" value="30"></div>
 <div class="fg"><label>强度</label><div class="igrp" id="igrp"><button class="ibtn" data-v="light">轻松</button><button class="ibtn sel" data-v="moderate">适中</button><button class="ibtn" data-v="intense">高强度</button></div></div>
 <div class="fg"><label>备注</label><textarea class="ft" id="exNotes" placeholder="记录一下感受..."></textarea></div>
@@ -526,35 +526,34 @@ if(isAuthed())enterApp();else showLogin();
 initLogin();
 /* ===== JSONBin 云端同步 ===== */
 const ZX='$2a$10$1MyN.mkykHVvWl4Aaxdw3ejSPM4qs02arLVVzlhBge7wqRthPYaZG';
+const ZB_BIN_ID='6a44f1ceda38895dfe1b4222';  // 共享数据仓库 — 所有设备共用同一个
 const ZB_KEY='luna_bin_id';
 const ZB_URL='https://api.jsonbin.io/v3/b';
 function isZB(){return ZX!=='YOUR_MASTER_KEY'}
 async function ld(){
-  // 尝试从云端加载
   if(isZB()){
-    const binId=localStorage.getItem(ZB_KEY);
-    if(binId){
-      try{
-        const r=await fetch(ZB_URL+'/'+binId+'/latest',{headers:{'X-Master-Key':ZX}});
-        if(r.ok){const j=await r.json();localStorage.setItem(SK,JSON.stringify(j.record));return j.record}
-        console.warn('Cloud load failed, using local cache');
-      }catch(e){console.warn('Cloud load failed, using local cache')}
-    }
+    try{
+      const r=await fetch(ZB_URL+'/'+ZB_BIN_ID+'/latest',{headers:{'X-Master-Key':ZX}});
+      if(r.ok){
+        const j=await r.json(),cd=j.record;
+        // 迁移: 云端为空但本地有旧数据 → 上传到云端
+        if((!cd.ex||cd.ex.length===0)&&(!cd.pd||cd.pd.length===0)){
+          const ls=localStorage.getItem(SK);
+          if(ls){try{const local=JSON.parse(ls);if((local.ex&&local.ex.length>0)||(local.pd&&local.pd.length>0)){sd(local);return local}}catch(e){}}
+        }
+        localStorage.setItem(SK,JSON.stringify(cd));
+        return cd;
+      }
+      console.warn('Cloud load failed, using local cache');
+    }catch(e){console.warn('Cloud load failed, using local cache')}
   }
-  // 本地缓存兜底
   try{const d=localStorage.getItem(SK);return d?JSON.parse(d):{ex:[],pd:[]}}catch(e){return{ex:[],pd:[]}}
 }
 async function sd(d){
   localStorage.setItem(SK,JSON.stringify(d));
   if(!isZB())return;
-  let binId=localStorage.getItem(ZB_KEY);
   try{
-    if(!binId){
-      const r=await fetch(ZB_URL,{method:'POST',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d)});
-      if(r.ok){const j=await r.json();binId=j.metadata.id;localStorage.setItem(ZB_KEY,binId)}
-    }else{
-      await fetch(ZB_URL+'/'+binId,{method:'PUT',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d)});
-    }
+    await fetch(ZB_URL+'/'+ZB_BIN_ID,{method:'PUT',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d)});
   }catch(e){console.warn('Cloud save failed, saved locally')}
 }
 let D={ex:[],pd:[]};

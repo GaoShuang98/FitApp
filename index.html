@@ -526,35 +526,34 @@ if(isAuthed())enterApp();else showLogin();
 initLogin();
 /* ===== JSONBin 云端同步 ===== */
 const ZX='$2a$10$1MyN.mkykHVvWl4Aaxdw3ejSPM4qs02arLVVzlhBge7wqRthPYaZG';
+const ZB_BIN_ID='6a44f1ceda38895dfe1b4222';  // 共享数据仓库 — 所有设备共用同一个
 const ZB_KEY='luna_bin_id';
 const ZB_URL='https://api.jsonbin.io/v3/b';
 function isZB(){return ZX!=='YOUR_MASTER_KEY'}
 async function ld(){
-  // 尝试从云端加载
   if(isZB()){
-    const binId=localStorage.getItem(ZB_KEY);
-    if(binId){
-      try{
-        const r=await fetch(ZB_URL+'/'+binId+'/latest',{headers:{'X-Master-Key':ZX}});
-        if(r.ok){const j=await r.json();localStorage.setItem(SK,JSON.stringify(j.record));return j.record}
-        console.warn('Cloud load failed, using local cache');
-      }catch(e){console.warn('Cloud load failed, using local cache')}
-    }
+    try{
+      const r=await fetch(ZB_URL+'/'+ZB_BIN_ID+'/latest',{headers:{'X-Master-Key':ZX}});
+      if(r.ok){
+        const j=await r.json(),cd=j.record;
+        // 迁移: 云端为空但本地有旧数据 → 上传到云端
+        if((!cd.ex||cd.ex.length===0)&&(!cd.pd||cd.pd.length===0)){
+          const ls=localStorage.getItem(SK);
+          if(ls){try{const local=JSON.parse(ls);if((local.ex&&local.ex.length>0)||(local.pd&&local.pd.length>0)){sd(local);return local}}catch(e){}}
+        }
+        localStorage.setItem(SK,JSON.stringify(cd));
+        return cd;
+      }
+      console.warn('Cloud load failed, using local cache');
+    }catch(e){console.warn('Cloud load failed, using local cache')}
   }
-  // 本地缓存兜底
   try{const d=localStorage.getItem(SK);return d?JSON.parse(d):{ex:[],pd:[]}}catch(e){return{ex:[],pd:[]}}
 }
 async function sd(d){
   localStorage.setItem(SK,JSON.stringify(d));
   if(!isZB())return;
-  let binId=localStorage.getItem(ZB_KEY);
   try{
-    if(!binId){
-      const r=await fetch(ZB_URL,{method:'POST',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d)});
-      if(r.ok){const j=await r.json();binId=j.metadata.id;localStorage.setItem(ZB_KEY,binId)}
-    }else{
-      await fetch(ZB_URL+'/'+binId,{method:'PUT',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d)});
-    }
+    await fetch(ZB_URL+'/'+ZB_BIN_ID,{method:'PUT',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d)});
   }catch(e){console.warn('Cloud save failed, saved locally')}
 }
 let D={ex:[],pd:[]};
