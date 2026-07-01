@@ -528,47 +528,44 @@ document.getElementById('logoutBtn').addEventListener('click',()=>{try{localStor
 if(isAuthed())enterApp();else showLogin();
 }
 initLogin();
-/* ===== JSONBin 云端同步 ===== */
-const ZX='$2a$10$1MyN.mkykHVvWl4Aaxdw3ejSPM4qs02arLVVzlhBge7wqRthPYaZG';
-const ZB_BIN_ID='6a44f1ceda38895dfe1b4222';
-const ZB_KEY='luna_bin_id';
-const ZB_URL='https://api.jsonbin.io/v3/b';
-function isZB(){return ZX!=='YOUR_MASTER_KEY'}
+/* ===== GitHub API 云端同步 ===== */
+const GH_TOKEN='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';
+const GH_OWNER='GaoShuang98',GH_REPO='FitApp',GH_PATH='data.json';
+const GH_URL='https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+GH_PATH;
+let _ghSha=null;
+function b64e(s){const b=new TextEncoder().encode(s);let r='';for(let i=0;i<b.length;i++)r+=String.fromCharCode(b[i]);return btoa(r)}
+function b64d(s){const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return new TextDecoder().decode(a)}
 function setSyncStatus(ok){
 	const el=document.getElementById('syncDot'),lb=document.getElementById('syncLabel');
 	if(el){el.style.background=ok?'var(--ex)':'var(--cy)';el.title=ok?'云端已连接':'云端连接失败'}
 	if(lb)lb.textContent=ok?'云端已连接':'离线 (仅本地)'
 }
 async function ld(){
-	if(isZB()){
-		try{
-			const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),5000);
-			const r=await fetch(ZB_URL+'/'+ZB_BIN_ID+'/latest',{headers:{'X-Master-Key':ZX},signal:ctrl.signal});
-			clearTimeout(tid);
-			if(r.ok){
-				const j=await r.json(),cd=j.record;
-				// 迁移
-				if((!cd.ex||cd.ex.length===0)&&(!cd.pd||cd.pd.length===0)){
-					const ls=localStorage.getItem(SK);
-					if(ls){try{const local=JSON.parse(ls);if((local.ex&&local.ex.length>0)||(local.pd&&local.pd.length>0)){sd(local);setSyncStatus(true);return local}}catch(e){}}
-				}
-				localStorage.setItem(SK,JSON.stringify(cd));
-				setSyncStatus(true);return cd;
-			}
-			console.warn('Cloud returned '+r.status);setSyncStatus(false);
-		}catch(e){console.warn('Cloud unreachable: '+e.message);setSyncStatus(false)}
-	}
+	try{
+		const r=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+GH_TOKEN,'Accept':'application/vnd.github+json'}});
+		if(r.ok){
+			const j=await r.json();_ghSha=j.sha;
+			const d=JSON.parse(b64d(j.content));
+			localStorage.setItem(SK,JSON.stringify(d));
+			setSyncStatus(true);return d;
+		}else if(r.status===404){
+			const d={ex:[],pd:[]};localStorage.setItem(SK,JSON.stringify(d));
+			setSyncStatus(true);return d;
+		}
+		console.warn('GitHub returned '+r.status);setSyncStatus(false);
+	}catch(e){console.warn('GitHub unreachable: '+e.message);setSyncStatus(false)}
 	try{const d=localStorage.getItem(SK);return d?JSON.parse(d):{ex:[],pd:[]}}catch(e){return{ex:[],pd:[]}}
 }
 async function sd(d){
 	localStorage.setItem(SK,JSON.stringify(d));
-	if(!isZB())return;
 	try{
-		const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),5000);
-		const r=await fetch(ZB_URL+'/'+ZB_BIN_ID,{method:'PUT',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d),signal:ctrl.signal});
-		clearTimeout(tid);
-		if(r.ok)setSyncStatus(true);else setSyncStatus(false);
-	}catch(e){console.warn('Cloud save failed: '+e.message);setSyncStatus(false)}
+		if(!_ghSha){try{const r=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+GH_TOKEN,'Accept':'application/vnd.github+json'}});if(r.ok){const j=await r.json();_ghSha=j.sha}}catch(e){}}
+		const body={message:'update data',content:b64e(JSON.stringify(d))};
+		if(_ghSha)body.sha=_ghSha;
+		const r=await fetch(GH_URL,{method:'PUT',headers:{'Authorization':'Bearer '+GH_TOKEN,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+		if(r.ok){const j=await r.json();_ghSha=j.content.sha;setSyncStatus(true)}
+		else{console.warn('GitHub save returned '+r.status);setSyncStatus(false)}
+	}catch(e){console.warn('GitHub save failed: '+e.message);setSyncStatus(false)}
 }
 let D={ex:[],pd:[]};
 const fmt=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day};
