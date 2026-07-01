@@ -401,6 +401,7 @@ padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);
 </head>
 <body>
 <div class="bg-wallpaper"></div>
+<div id="syncToast" style="position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:99999;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:500;font-family:var(--f);opacity:0;transition:opacity 0.35s;pointer-events:none"></div>
 <div class="login-overlay" id="loginOverlay">
 <div class="login-card">
 <div class="login-logo">🌙</div>
@@ -534,6 +535,15 @@ function updateSyncBtn(){
 	const sb=document.getElementById('settingsBtn');
 	if(sb)sb.textContent=hasToken()?'☁️ 已同步':'☁️ 未同步';
 }
+let _syncToastTimer=0;
+function syncToast(msg,ok){
+	const el=document.getElementById('syncToast');if(!el)return;
+	el.textContent=msg;el.style.background=ok?'var(--exs)':'var(--cys)';
+	el.style.color=ok?'var(--ex)':'var(--cy)';
+	el.style.opacity='1';
+	clearTimeout(_syncToastTimer);
+	_syncToastTimer=setTimeout(()=>{el.style.opacity='0'},2500);
+}
 function saveToken(){
 	const v=document.getElementById('tokenInput').value.trim();
 	if(!v.startsWith('ghp_')&&!v.startsWith('github_pat_')){
@@ -587,13 +597,19 @@ async function ld(){
 				const j=await r.json();_ghSha=j.sha;
 				const d=JSON.parse(b64d(j.content));
 				localStorage.setItem(SK,JSON.stringify(d));
+				syncToast('✅ 已从云端加载数据',true);
 				return d;
 			}else if(r.status===404){
 				const d={ex:[],pd:[]};localStorage.setItem(SK,JSON.stringify(d));
+				syncToast('✅ 云端就绪',true);
 				return d;
 			}
 			console.warn('GitHub returned '+r.status);
-		}catch(e){console.warn('GitHub unreachable: '+e.message)}
+			syncToast('❌ 云端连接失败('+r.status+')，使用本地数据',false);
+		}catch(e){
+			console.warn('GitHub unreachable: '+e.message);
+			syncToast('❌ 无法连接云端，使用本地数据',false);
+		}
 	}
 	try{const d=localStorage.getItem(SK);return d?JSON.parse(d):{ex:[],pd:[]}}catch(e){return{ex:[],pd:[]}}
 }
@@ -605,9 +621,9 @@ async function sd(d){
 		const body={message:'update data',content:b64e(JSON.stringify(d))};
 		if(_ghSha)body.sha=_ghSha;
 		const r=await fetch(GH_URL,{method:'PUT',headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-		if(r.ok){const j=await r.json();_ghSha=j.content.sha}
-		else{console.warn('GitHub save returned '+r.status)}
-	}catch(e){console.warn('GitHub save failed: '+e.message)}
+		if(r.ok){const j=await r.json();_ghSha=j.content.sha;syncToast('✅ 已同步到云端',true)}
+		else{syncToast('❌ 同步失败('+r.status+')',false)}
+	}catch(e){syncToast('❌ 无法连接云端，仅保存在本地',false)}
 }
 let D={ex:[],pd:[]};
 const fmt=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day};
