@@ -777,7 +777,7 @@ function setSelVal(selId,val){
 function re(){
 		document.getElementById('eddisp').textContent='📅 '+now();
 		document.getElementById('exDate').value=now();document.getElementById('exDur').value=30;
-		document.getElementById('exNotes').value='';setSelVal('exType','running');
+		document.getElementById('exNotes').value='';setSelVal('exType','aerobic');
 		document.querySelectorAll('#igrp .ibtn').forEach(b=>b.classList.remove('sel'));
 		document.querySelector('#igrp .ibtn[data-v="moderate"]').classList.add('sel');
 		eid=null;document.getElementById('btnEx').textContent='记录运动';rte();drawWeekChart();
