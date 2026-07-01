@@ -589,20 +589,21 @@ const v=document.getElementById('loginInput').value;
 if(v===PWD){try{localStorage.setItem(AUTH_KEY,'1')}catch(e){}enterApp()}
 else{const inp=document.getElementById('loginInput');inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.value='';document.getElementById('loginErr').classList.add('show')}
 }
+let D={ex:[],pd:[]};
 function initLogin(){
 	if(window._loginInited)return;window._loginInited=true;
-	document.getElementById('loginBtn').addEventListener('click',tryLogin);
-	document.getElementById('loginInput').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin()});
-	document.getElementById('logoutBtn').addEventListener('click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
-	// 同步设置
-	document.getElementById('settingsBtn').addEventListener('click',()=>{document.getElementById('tokenInput').value=getToken();showTokenSetup()});
-	document.getElementById('tokenSaveBtn').addEventListener('click',saveToken);
-	document.getElementById('tokenSkipBtn').addEventListener('click',hideTokenSetup);
-	document.getElementById('tokenInput').addEventListener('keydown',e=>{if(e.key==='Enter')saveToken()});
-	// 手机底部工具栏
-	const mbL=document.getElementById('mbLogout');if(mbL)mbL.addEventListener('click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
-	const mbS=document.getElementById('mbSync');if(mbS)mbS.addEventListener('click',()=>{document.getElementById('tokenInput').value=getToken();showTokenSetup()});
-	const mbT=document.getElementById('mbTheme');if(mbT)mbT.addEventListener('click',()=>{
+	const byId=id=>document.getElementById(id);
+	const safeOn=(id,evt,fn)=>{const el=byId(id);if(el)el.addEventListener(evt,fn)};
+	safeOn('loginBtn','click',tryLogin);
+	safeOn('loginInput','keydown',e=>{if(e.key==='Enter')tryLogin()});
+	safeOn('logoutBtn','click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
+	safeOn('settingsBtn','click',()=>{const inp=byId('tokenInput');if(inp){inp.value=getToken();showTokenSetup()}});
+	safeOn('tokenSaveBtn','click',saveToken);
+	safeOn('tokenSkipBtn','click',hideTokenSetup);
+	safeOn('tokenInput','keydown',e=>{if(e.key==='Enter')saveToken()});
+	safeOn('mbLogout','click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
+	safeOn('mbSync','click',()=>{const inp=byId('tokenInput');if(inp){inp.value=getToken();showTokenSetup()}});
+	safeOn('mbTheme','click',()=>{
 		const t=document.documentElement.getAttribute('data-theme');
 		const next=t==='dark'?'light':t==='light'?'colorful':'dark';
 		document.documentElement.setAttribute('data-theme',next);
@@ -657,9 +658,8 @@ async function sd(d){
 		if(r.ok){const j=await r.json();_ghSha=j.content.sha;syncToast('✅ 已同步到云端',true)}
 		else{syncToast('❌ 同步失败('+r.status+')',false)}
 	}catch(e){syncToast('❌ 无法连接云端，仅保存在本地',false)}
-}
-let D={ex:[],pd:[]};
-const fmt=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day};
+	}
+	const fmt=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day};
 const now=()=>fmt(new Date());
 const im={running:'🏃',walking:'🚶',yoga:'🧘',swimming:'🏊',cycling:'🚴',gym:'🏋力量训练',dancing:'💃',pilates:'🤸',hiking:'🥾',aerobic:'🏋',jump_rope:'🪢',rowing:'🚣',badminton:'🏸',custom:'📝'};
 const nm={running:'跑步',walking:'散步',yoga:'瑜伽',swimming:'游泳',cycling:'骑行',gym:'力量训练',dancing:'跳舞',aerobic:'跳操',pilates:'普拉提',hiking:'徒步',jump_rope:'跳绳',rowing:'划船',badminton:'羽毛球',custom:'自定义'};
