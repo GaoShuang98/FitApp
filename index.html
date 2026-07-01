@@ -270,14 +270,15 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 .emp p{font-size:14px}
 
 /* ===== Responsive ===== */
-@media(max-width:860px){
-.app{flex-direction:column;padding:8px;gap:8px}
-.side{width:100%;height:auto;position:static;flex-direction:row;align-items:center;padding:10px 14px;gap:10px;border-radius:var(--r3);overflow-x:auto}
-.side-logo h1{font-size:15px}.side-nav{flex-direction:row;flex:0}
-.ni{padding:7px 10px;font-size:12px;white-space:nowrap}.ni .ic{margin-right:-3px}
-.ni.act::before{display:none}
-.side-ft{display:none}.ex-layout,.cy-layout{grid-template-columns:1fr}.sgrid{grid-template-columns:repeat(2,1fr)}
-}
+	@media(max-width:860px){
+	.app{flex-direction:column;padding:8px;gap:8px;padding-bottom:62px}
+	.side{width:100%;height:auto;position:static;flex-direction:row;align-items:center;padding:10px 14px;gap:10px;border-radius:var(--r3);overflow-x:auto}
+	.side-logo h1{font-size:15px}.side-nav{flex-direction:row;flex:0}
+	.ni{padding:7px 10px;font-size:12px;white-space:nowrap}.ni .ic{margin-right:-3px}
+	.ni.act::before{display:none}
+	.side-ft{display:none}.ex-layout,.cy-layout{grid-template-columns:1fr}.sgrid{grid-template-columns:repeat(2,1fr)}
+	.mobile-bar{display:flex}
+	}
 @media(max-width:460px){
 .sgrid{grid-template-columns:1fr 1fr}.sv{font-size:28px}.top h2{font-size:18px}.cg{gap:2px}.cd{font-size:11px}
 }
@@ -397,6 +398,20 @@ border:none;background:none;color:var(--t3);font-size:11px;cursor:pointer;
 padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);margin-top:6px
 }
 .logout-btn:hover{color:var(--cy);background:var(--cys)}
+/* 手机底部工具栏 */
+.mobile-bar{
+display:none;position:fixed;bottom:0;left:0;right:0;z-index:500;
+background:var(--gls-side);backdrop-filter:blur(40px) saturate(1.5);-webkit-backdrop-filter:blur(40px) saturate(1.5);
+border-top:1px solid var(--gb);padding:8px 12px;
+justify-content:space-around;align-items:center;
+}
+.mobile-bar .mbtn{
+border:none;background:none;color:var(--t2);font-size:18px;padding:6px 12px;
+border-radius:var(--r1);cursor:pointer;transition:all var(--e1);font-family:var(--f);
+display:flex;align-items:center;gap:4px;font-size:12px;
+}
+.mobile-bar .mbtn:hover{background:var(--gls1);color:var(--t1)}
+.mobile-bar .mbtn.active{border-color:var(--ex)}
 </style>
 </head>
 <body>
@@ -535,6 +550,8 @@ function hideTokenSetup(){
 function updateSyncBtn(){
 	const sb=document.getElementById('settingsBtn');
 	if(sb)sb.textContent=hasToken()?'☁️ 已同步':'☁️ 未同步';
+	const mb=document.getElementById('mbSync');
+	if(mb)mb.textContent=hasToken()?'☁️':'☁️';
 }
 let _syncToastTimer=0;
 function syncToast(msg,ok){
@@ -577,6 +594,15 @@ function initLogin(){
 	document.getElementById('tokenSaveBtn').addEventListener('click',saveToken);
 	document.getElementById('tokenSkipBtn').addEventListener('click',hideTokenSetup);
 	document.getElementById('tokenInput').addEventListener('keydown',e=>{if(e.key==='Enter')saveToken()});
+	// 手机底部工具栏
+	document.getElementById('mbLogout').addEventListener('click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
+	document.getElementById('mbSync').addEventListener('click',()=>{document.getElementById('tokenInput').value=getToken();showTokenSetup()});
+	document.getElementById('mbTheme').addEventListener('click',()=>{
+		const t=document.documentElement.getAttribute('data-theme');
+		const next=t==='dark'?'light':t==='light'?'colorful':'dark';
+		document.documentElement.setAttribute('data-theme',next);
+		localStorage.setItem('luna_theme',next);
+	});
 	if(isAuthed())enterApp();else showLogin();
 }
 initLogin();
@@ -903,5 +929,10 @@ D=await ld();
 document.getElementById('exDate').value=now();document.getElementById('pStart').value=now();rd();
 }
 </script>
+<div class="mobile-bar" id="mobileBar">
+<button class="mbtn" id="mbTheme" title="切换主题">🌙</button>
+<button class="mbtn" id="mbSync" title="同步设置">☁️</button>
+<button class="mbtn" id="mbLogout" title="退出登录">🔒</button>
+</div>
 </body>
 </html>
