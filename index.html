@@ -286,7 +286,6 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 	}
 	@media(max-width:460px){
 	.sgrid{grid-template-columns:1fr 1fr}.sv{font-size:28px}.top h2{font-size:18px}.cg{gap:2px}.cd{font-size:11px}
-	.heatmap-cell{width:10px;height:10px;border-radius:1.5px}
 	.heatmap-table{border-spacing:2px}
 	.hm-month{font-size:8px}.heatmap-header h3{font-size:13px}
 	}
@@ -352,7 +351,7 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 	.heatmap-header .hm-total{font-size:12px;color:var(--t2);flex-shrink:0;margin-left:12px}
 	.heatmap-table{border-collapse:separate;border-spacing:3px}
 	.heatmap-table td{padding:0;line-height:0}
-	.heatmap-cell{width:13px;height:13px;border-radius:2px;background:var(--gls1);transition:all var(--e1);cursor:default;position:relative}
+	.heatmap-cell{border-radius:2px;background:var(--gls1);transition:all var(--e1);cursor:default;position:relative}
 .heatmap-cell:hover{outline:1.5px solid var(--t2);z-index:2;transform:scale(1.5)}
 .heatmap-cell[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10px;font-family:var(--f);color:var(--t1);background:rgba(26,26,36,0.95);backdrop-filter:blur(20px);border:1px solid var(--gb);border-radius:6px;padding:4px 8px;pointer-events:none;z-index:10}
 .hm-label{font-size:9px;color:var(--t3);text-align:left;padding-right:6px;width:16px;line-height:13px;vertical-align:top}
@@ -714,15 +713,19 @@ ra.innerHTML=rc.map(r=>{if(r.it==='pd')return '<div class="ti"><div class="td">'
 }
 
 let eid=null;
-function renderHeatmap(){
-	const weeks=24,now2=new Date();now2.setHours(0,0,0,0);
-	const endDay=new Date(now2);endDay.setDate(endDay.getDate()-(endDay.getDay()+1)%7+6);
-	const startDay=new Date(endDay);startDay.setDate(startDay.getDate()-weeks*7+1);
-	const body=document.getElementById('hmBody'),total=document.getElementById('hmTotal');
-	const todayStr=now();const dayData={};let totalMin=0;
-	D.ex.forEach(e=>{const m=e.duration||0;dayData[e.date]=(dayData[e.date]||0)+m});
-	const dlabels=['','一','','三','','五',''];
-	const mnames=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+	function renderHeatmap(){
+		const weeks=24,now2=new Date();now2.setHours(0,0,0,0);
+		const endDay=new Date(now2);endDay.setDate(endDay.getDate()-(endDay.getDay()+1)%7+6);
+		const startDay=new Date(endDay);startDay.setDate(startDay.getDate()-weeks*7+1);
+		const body=document.getElementById('hmBody'),total=document.getElementById('hmTotal');
+		// 自适应单元格：根据卡片宽度动态计算
+		const wrap=body.closest('.card')||body.parentElement;
+		const cw=wrap?wrap.clientWidth-44:300;
+		const cellSize=Math.max(7,Math.min(15,Math.floor((cw-28)/(weeks+1))));
+		const todayStr=now();const dayData={};let totalMin=0;
+		D.ex.forEach(e=>{const m=e.duration||0;dayData[e.date]=(dayData[e.date]||0)+m});
+		const dlabels=['','一','','三','','五',''];
+		const mnames=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 	// 逐列计算月份（不再用 colspan，精准对齐）
 	let monthRow='<tr><td></td>';
 	let lastM=-1;
@@ -742,7 +745,7 @@ const mins=dayData[ds]||0;totalMin+=mins;
 let bg='var(--gls1)';let tip='';
 if(mins>0){if(mins<=15)bg='rgba(48,209,88,0.15)';else if(mins<=30)bg='rgba(48,209,88,0.3)';else if(mins<=60)bg='rgba(48,209,88,0.55)';else bg='var(--ex)';tip=ds+' : '+mins+'分钟'}
 if(!mins&&ds===todayStr)bg='var(--gls2)';
-		r+='<td><div class="heatmap-cell" style="background:'+bg+';cursor:pointer" data-date="'+ds+'" onclick="showDayDetail(event,\''+ds+'\')"'+(tip?' data-tip="'+tip+'"':'')+'></div></td>';
+			r+='<td><div class="heatmap-cell" style="width:'+cellSize+'px;height:'+cellSize+'px;background:'+bg+';'+(mins>0?'cursor:pointer':'')+'" data-date="'+ds+'" onclick="showDayDetail(event,\''+ds+'\')"'+(tip?' data-tip="'+tip+'"':'')+'></div></td>';
 }
 r+='</tr>';rows+=r;
 }
