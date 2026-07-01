@@ -423,7 +423,11 @@ padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);
 </div>
 <div class="side-ft">
 <div class="uinfo"><div class="uav">瑞</div><span>瑞典健康日志</span></div>
-<div class="theme-row" style="margin-top:8px;display:flex;gap:4px">
+<div class="sync-row" style="display:flex;align-items:center;gap:5px;margin-top:6px;font-size:10px;color:var(--t3)">
+<span id="syncDot" style="width:7px;height:7px;border-radius:50%;background:var(--t3);flex-shrink:0;transition:background 0.5s"></span>
+<span id="syncLabel">检测中…</span>
+</div>
+<div class="theme-row" style="margin-top:6px;display:flex;gap:4px">
 <button class="tbtn active" data-t="dark" title="暗色模式">🌙</button>
 <button class="tbtn" data-t="light" title="亮色模式">☀️</button>
 <button class="tbtn" data-t="colorful" title="彩色模式">🌈</button>
@@ -526,35 +530,45 @@ if(isAuthed())enterApp();else showLogin();
 initLogin();
 /* ===== JSONBin 云端同步 ===== */
 const ZX='$2a$10$1MyN.mkykHVvWl4Aaxdw3ejSPM4qs02arLVVzlhBge7wqRthPYaZG';
-const ZB_BIN_ID='6a44f1ceda38895dfe1b4222';  // 共享数据仓库 — 所有设备共用同一个
+const ZB_BIN_ID='6a44f1ceda38895dfe1b4222';
 const ZB_KEY='luna_bin_id';
 const ZB_URL='https://api.jsonbin.io/v3/b';
 function isZB(){return ZX!=='YOUR_MASTER_KEY'}
+function setSyncStatus(ok){
+	const el=document.getElementById('syncDot'),lb=document.getElementById('syncLabel');
+	if(el){el.style.background=ok?'var(--ex)':'var(--cy)';el.title=ok?'云端已连接':'云端连接失败'}
+	if(lb)lb.textContent=ok?'云端已连接':'离线 (仅本地)'
+}
 async function ld(){
-  if(isZB()){
-    try{
-      const r=await fetch(ZB_URL+'/'+ZB_BIN_ID+'/latest',{headers:{'X-Master-Key':ZX}});
-      if(r.ok){
-        const j=await r.json(),cd=j.record;
-        // 迁移: 云端为空但本地有旧数据 → 上传到云端
-        if((!cd.ex||cd.ex.length===0)&&(!cd.pd||cd.pd.length===0)){
-          const ls=localStorage.getItem(SK);
-          if(ls){try{const local=JSON.parse(ls);if((local.ex&&local.ex.length>0)||(local.pd&&local.pd.length>0)){sd(local);return local}}catch(e){}}
-        }
-        localStorage.setItem(SK,JSON.stringify(cd));
-        return cd;
-      }
-      console.warn('Cloud load failed, using local cache');
-    }catch(e){console.warn('Cloud load failed, using local cache')}
-  }
-  try{const d=localStorage.getItem(SK);return d?JSON.parse(d):{ex:[],pd:[]}}catch(e){return{ex:[],pd:[]}}
+	if(isZB()){
+		try{
+			const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),8000);
+			const r=await fetch(ZB_URL+'/'+ZB_BIN_ID+'/latest',{headers:{'X-Master-Key':ZX},signal:ctrl.signal});
+			clearTimeout(tid);
+			if(r.ok){
+				const j=await r.json(),cd=j.record;
+				// 迁移
+				if((!cd.ex||cd.ex.length===0)&&(!cd.pd||cd.pd.length===0)){
+					const ls=localStorage.getItem(SK);
+					if(ls){try{const local=JSON.parse(ls);if((local.ex&&local.ex.length>0)||(local.pd&&local.pd.length>0)){sd(local);setSyncStatus(true);return local}}catch(e){}}
+				}
+				localStorage.setItem(SK,JSON.stringify(cd));
+				setSyncStatus(true);return cd;
+			}
+			console.warn('Cloud returned '+r.status);setSyncStatus(false);
+		}catch(e){console.warn('Cloud unreachable: '+e.message);setSyncStatus(false)}
+	}
+	try{const d=localStorage.getItem(SK);return d?JSON.parse(d):{ex:[],pd:[]}}catch(e){return{ex:[],pd:[]}}
 }
 async function sd(d){
-  localStorage.setItem(SK,JSON.stringify(d));
-  if(!isZB())return;
-  try{
-    await fetch(ZB_URL+'/'+ZB_BIN_ID,{method:'PUT',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d)});
-  }catch(e){console.warn('Cloud save failed, saved locally')}
+	localStorage.setItem(SK,JSON.stringify(d));
+	if(!isZB())return;
+	try{
+		const ctrl=new AbortController();const tid=setTimeout(()=>ctrl.abort(),8000);
+		const r=await fetch(ZB_URL+'/'+ZB_BIN_ID,{method:'PUT',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d),signal:ctrl.signal});
+		clearTimeout(tid);
+		if(r.ok)setSyncStatus(true);else setSyncStatus(false);
+	}catch(e){console.warn('Cloud save failed: '+e.message);setSyncStatus(false)}
 }
 let D={ex:[],pd:[]};
 const fmt=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day};
