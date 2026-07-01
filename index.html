@@ -350,12 +350,69 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 .hm-month{font-size:9px;color:var(--t3);text-align:left;padding-top:2px}
 .heatmap-legend{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:10px;color:var(--t2)}
 .heatmap-legend .leg-cell{width:10px;height:10px;border-radius:2px;flex-shrink:0}
-.heatmap-legend .leg-cell{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* ===== Login Gate ===== */
+.login-overlay{
+position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
+background:radial-gradient(ellipse 90% 70% at 15% 15%,rgba(80,80,110,0.25),transparent 55%),
+radial-gradient(ellipse 80% 60% at 85% 85%,rgba(60,60,85,0.2),transparent 55%),
+linear-gradient(175deg,#1c1c26 0%,#1a1a24 30%,#16161f 60%,#1b1b25 100%);
+backdrop-filter:blur(20px)
+}
+.login-card{
+width:90%;max-width:340px;padding:34px 28px;border-radius:var(--r4);
+background:var(--gls-card);backdrop-filter:blur(50px) saturate(1.6);-webkit-backdrop-filter:blur(50px) saturate(1.6);
+border:1px solid var(--gb);box-shadow:var(--gsh-lift),inset 0 1px 0 rgba(255,255,255,0.05);
+text-align:center;animation:loginIn 0.5s var(--e2)
+}
+@keyframes loginIn{from{opacity:0;transform:translateY(20px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.login-logo{
+width:64px;height:64px;border-radius:18px;margin:0 auto 18px;
+background:linear-gradient(135deg,var(--p1),var(--p3));
+display:flex;align-items:center;justify-content:center;font-size:32px;
+box-shadow:0 6px 24px rgba(255,55,95,0.3)
+}
+.login-card h2{font-size:21px;font-weight:640;letter-spacing:-0.4px;margin-bottom:4px;color:var(--t1)}
+.login-card .login-sub{font-size:13px;color:var(--t2);margin-bottom:22px;font-weight:460}
+.login-input{
+width:100%;padding:13px 15px;border:1px solid var(--gb);border-radius:var(--r1);
+font-size:15px;font-family:var(--f);background:var(--gls1);color:var(--t1);
+outline:none;transition:all var(--e1);letter-spacing:1px;text-align:center;margin-bottom:10px
+}
+.login-input:focus{border-color:var(--p1);box-shadow:0 0 0 3px var(--cys),0 0 20px var(--cys)}
+.login-input.shake{animation:shake 0.4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+.login-btn{
+width:100%;padding:13px;border:none;border-radius:var(--r1);font-size:15px;font-weight:540;
+font-family:var(--f);cursor:pointer;transition:all var(--e1);
+background:linear-gradient(135deg,var(--p1),var(--p3));color:#fff
+}
+.login-btn:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 6px 24px rgba(255,55,95,0.35)}
+.login-err{font-size:12px;color:var(--cy);margin-top:10px;min-height:16px;opacity:0;transition:opacity var(--e1)}
+.login-err.show{opacity:1}
+.login-hint{font-size:11px;color:var(--t3);margin-top:16px}
+.app.hidden{display:none}
+.logout-btn{
+border:none;background:none;color:var(--t3);font-size:11px;cursor:pointer;
+padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);margin-top:6px
+}
+.logout-btn:hover{color:var(--cy);background:var(--cys)}
 </style>
 </head>
 <body>
 <div class="bg-wallpaper"></div>
-<div class="app">
+<div class="login-overlay" id="loginOverlay">
+<div class="login-card">
+<div class="login-logo">🌙</div>
+<h2>Luna</h2>
+<div class="login-sub">请输入密码进入</div>
+<input type="password" class="login-input" id="loginInput" placeholder="输入密码" autocomplete="off" autofocus>
+<button class="login-btn" id="loginBtn">进入</button>
+<div class="login-err" id="loginErr">密码错误，请重试</div>
+<div class="login-hint">仅限家庭成员使用</div>
+</div>
+</div>
+<div class="app hidden" id="appRoot">
 <nav class="side">
 <div class="side-logo"><div class="li">🌙</div><h1>Luna</h1></div>
 <div class="side-nav">
@@ -371,6 +428,7 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 <button class="tbtn" data-t="light" title="亮色模式">☀️</button>
 <button class="tbtn" data-t="colorful" title="彩色模式">🌈</button>
 </div>
+<button class="logout-btn" id="logoutBtn">🔒 退出登录</button>
 </div>
 </nav>
 <main class="main">
@@ -438,6 +496,34 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 
 'use strict';
 const SK='luna_v1';
+
+/* ===== 登录守卫 ===== */
+const PWD='luna520';
+const AUTH_KEY='luna_auth';
+function isAuthed(){try{return localStorage.getItem(AUTH_KEY)==='1'}catch(e){return false}}
+function enterApp(){
+const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='none';
+document.getElementById('appRoot').classList.remove('hidden');
+if(!window._appInited){window._appInited=true;initApp()}
+}
+function showLogin(){
+const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='';
+document.getElementById('appRoot').classList.add('hidden');
+const inp=document.getElementById('loginInput');if(inp){inp.value='';inp.focus()}
+}
+function tryLogin(){
+const v=document.getElementById('loginInput').value;
+if(v===PWD){try{localStorage.setItem(AUTH_KEY,'1')}catch(e){}enterApp()}
+else{const inp=document.getElementById('loginInput');inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.value='';document.getElementById('loginErr').classList.add('show')}
+}
+function initLogin(){
+if(window._loginInited)return;window._loginInited=true;
+document.getElementById('loginBtn').addEventListener('click',tryLogin);
+document.getElementById('loginInput').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin()});
+document.getElementById('logoutBtn').addEventListener('click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
+if(isAuthed())enterApp();else showLogin();
+}
+initLogin();
 function ld(){try{const d=localStorage.getItem(SK);return d?JSON.parse(d):{ex:[],pd:[]}}catch(e){return{ex:[],pd:[]}}}
 function sd(d){localStorage.setItem(SK,JSON.stringify(d))}
 let D=ld();
@@ -681,7 +767,9 @@ b.classList.add('active');
 });
 })();
 
+function initApp(){
 document.getElementById('exDate').value=now();document.getElementById('pStart').value=now();rd();
+}
 </script>
 </body>
 </html>
