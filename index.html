@@ -522,6 +522,11 @@ display:flex;align-items:center;gap:4px;font-size:12px;
 
 </main>
 </div>
+<div class="mobile-bar" id="mobileBar">
+<button class="mbtn" id="mbTheme" title="切换主题">🌙</button>
+<button class="mbtn" id="mbSync" title="同步设置">☁️</button>
+<button class="mbtn" id="mbLogout" title="退出登录">🔒</button>
+</div>
 <script>
 
 'use strict';
@@ -595,9 +600,9 @@ function initLogin(){
 	document.getElementById('tokenSkipBtn').addEventListener('click',hideTokenSetup);
 	document.getElementById('tokenInput').addEventListener('keydown',e=>{if(e.key==='Enter')saveToken()});
 	// 手机底部工具栏
-	document.getElementById('mbLogout').addEventListener('click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
-	document.getElementById('mbSync').addEventListener('click',()=>{document.getElementById('tokenInput').value=getToken();showTokenSetup()});
-	document.getElementById('mbTheme').addEventListener('click',()=>{
+	const mbL=document.getElementById('mbLogout');if(mbL)mbL.addEventListener('click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
+	const mbS=document.getElementById('mbSync');if(mbS)mbS.addEventListener('click',()=>{document.getElementById('tokenInput').value=getToken();showTokenSetup()});
+	const mbT=document.getElementById('mbTheme');if(mbT)mbT.addEventListener('click',()=>{
 		const t=document.documentElement.getAttribute('data-theme');
 		const next=t==='dark'?'light':t==='light'?'colorful':'dark';
 		document.documentElement.setAttribute('data-theme',next);
@@ -927,12 +932,7 @@ b.classList.add('active');
 async function initApp(){
 D=await ld();
 document.getElementById('exDate').value=now();document.getElementById('pStart').value=now();rd();
-}
+	}
 </script>
-<div class="mobile-bar" id="mobileBar">
-<button class="mbtn" id="mbTheme" title="切换主题">🌙</button>
-<button class="mbtn" id="mbSync" title="同步设置">☁️</button>
-<button class="mbtn" id="mbLogout" title="退出登录">🔒</button>
-</div>
 </body>
 </html>
