@@ -1,7 +1,7 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import pathlib, re
 
-p = pathlib.Path(r"C:\Users\hgs\Documents\Codex\2026-07-01\xi\work\index.html")
+p = pathlib.Path(__file__).parent / "index.html"
 f = p.read_text(encoding="utf-8")
 
 # 1. Find and replace the select

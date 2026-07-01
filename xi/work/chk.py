@@ -1,5 +1,5 @@
-﻿import pathlib, re
-p = pathlib.Path(r"C:\Users\hgs\Documents\Codex\2026-07-01\xi\work\index.html")
+import pathlib, re
+p = pathlib.Path(__file__).parent / "index.html"
 f = p.read_text(encoding="utf-8")
 s = f.find("<script>")
 e = f.find("</script>")
