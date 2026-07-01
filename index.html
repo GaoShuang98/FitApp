@@ -518,7 +518,7 @@ async function enterApp(){
 	const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='none';
 	document.getElementById('appRoot').classList.remove('hidden');
 	await initApp();
-	if(!hasToken())showTokenSetup();
+	updateSyncBtn();
 }
 function showTokenSetup(){
 	const has=hasToken();
@@ -530,6 +530,10 @@ function showTokenSetup(){
 function hideTokenSetup(){
 	document.getElementById('tokenSetup').style.display='none';
 }
+function updateSyncBtn(){
+	const sb=document.getElementById('settingsBtn');
+	if(sb)sb.textContent=hasToken()?'☁️ 已同步':'☁️ 未同步';
+}
 function saveToken(){
 	const v=document.getElementById('tokenInput').value.trim();
 	if(!v.startsWith('ghp_')&&!v.startsWith('github_pat_')){
@@ -539,11 +543,8 @@ function saveToken(){
 	try{localStorage.setItem(GT_KEY,v)}catch(e){alert('无法保存，请检查浏览器是否允许本地存储')}
 	hideTokenSetup();
 	document.getElementById('tokenInput').value='';
-	// 立即尝试一次云端同步
 	ld().then(d=>{D=d;rd()});
-	// 保存反馈
-	const lb=document.getElementById('settingsBtn');
-	if(lb){lb.textContent='✅ 已连接';setTimeout(()=>{lb.textContent='⚙️ 同步设置'},2000)}
+	updateSyncBtn();
 }
 function showLogin(){
 const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='flex';
