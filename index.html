@@ -412,6 +412,18 @@ padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);
 <div class="login-hint">仅限家庭成员使用</div>
 </div>
 </div>
+<div class="login-overlay" id="tokenSetup" style="display:none;z-index:10000">
+<div class="login-card">
+<div class="login-logo">🔑</div>
+<h2>云端同步</h2>
+<div class="login-sub">输入 GitHub Token 以启用多设备同步</div>
+<input type="password" class="login-input" id="tokenInput" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+<button class="login-btn" id="tokenSaveBtn">保存并启用同步</button>
+<button class="btn btn-gh" id="tokenSkipBtn" style="width:100%;margin-top:6px">跳过（仅本地存储）</button>
+<div class="login-err" id="tokenErr">格式错误，请输入 ghp_ 开头的 Token</div>
+<div class="login-hint">在 github.com/settings/tokens 生成，勾选 repo 权限</div>
+</div>
+</div>
 <div class="app hidden" id="appRoot">
 <nav class="side">
 <div class="side-logo"><div class="li">🌙</div><h1>Luna</h1></div>
@@ -429,6 +441,7 @@ padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);
 <button class="tbtn" data-t="colorful" title="彩色模式">🌈</button>
 </div>
 <button class="logout-btn" id="logoutBtn">🔒 退出登录</button>
+<button class="logout-btn" id="settingsBtn">⚙️ 同步设置</button>
 </div>
 </nav>
 <main class="main">
@@ -502,9 +515,29 @@ const PWD='luna520';
 const AUTH_KEY='luna_auth';
 function isAuthed(){try{return localStorage.getItem(AUTH_KEY)==='1'}catch(e){return false}}
 async function enterApp(){
-const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='none';
-document.getElementById('appRoot').classList.remove('hidden');
-await initApp();
+	const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='none';
+	document.getElementById('appRoot').classList.remove('hidden');
+	await initApp();
+	if(!hasToken())showTokenSetup();
+}
+function showTokenSetup(){
+	document.getElementById('tokenSetup').style.display='flex';
+	document.getElementById('tokenInput').focus();
+	document.getElementById('tokenErr').classList.remove('show');
+}
+function hideTokenSetup(){
+	document.getElementById('tokenSetup').style.display='none';
+}
+function saveToken(){
+	const v=document.getElementById('tokenInput').value.trim();
+	if(!v.startsWith('ghp_')&&!v.startsWith('github_pat_')){
+		document.getElementById('tokenErr').classList.add('show');
+		return;
+	}
+	try{localStorage.setItem(GT_KEY,v)}catch(e){}
+	hideTokenSetup();
+	// 立即尝试一次云端同步
+	ld().then(d=>{D=d;rd()});
 }
 function showLogin(){
 const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='flex';
@@ -517,43 +550,54 @@ if(v===PWD){try{localStorage.setItem(AUTH_KEY,'1')}catch(e){}enterApp()}
 else{const inp=document.getElementById('loginInput');inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.value='';document.getElementById('loginErr').classList.add('show')}
 }
 function initLogin(){
-if(window._loginInited)return;window._loginInited=true;
-document.getElementById('loginBtn').addEventListener('click',tryLogin);
-document.getElementById('loginInput').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin()});
-document.getElementById('logoutBtn').addEventListener('click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
-if(isAuthed())enterApp();else showLogin();
+	if(window._loginInited)return;window._loginInited=true;
+	document.getElementById('loginBtn').addEventListener('click',tryLogin);
+	document.getElementById('loginInput').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin()});
+	document.getElementById('logoutBtn').addEventListener('click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
+	// 同步设置
+	document.getElementById('settingsBtn').addEventListener('click',()=>{document.getElementById('tokenInput').value=getToken();showTokenSetup()});
+	document.getElementById('tokenSaveBtn').addEventListener('click',saveToken);
+	document.getElementById('tokenSkipBtn').addEventListener('click',hideTokenSetup);
+	document.getElementById('tokenInput').addEventListener('keydown',e=>{if(e.key==='Enter')saveToken()});
+	if(isAuthed())enterApp();else showLogin();
 }
 initLogin();
 /* ===== GitHub API 云端同步 ===== */
-const GH_TOKEN='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';
 const GH_OWNER='GaoShuang98',GH_REPO='FitApp',GH_PATH='data.json';
 const GH_URL='https://api.github.com/repos/'+GH_OWNER+'/'+GH_REPO+'/contents/'+GH_PATH;
+const GT_KEY='luna_gh_token';
 let _ghSha=null;
+function getToken(){try{return localStorage.getItem(GT_KEY)||''}catch(e){return''}}
+function hasToken(){return getToken()!==''}
 function b64e(s){const b=new TextEncoder().encode(s);let r='';for(let i=0;i<b.length;i++)r+=String.fromCharCode(b[i]);return btoa(r)}
 function b64d(s){const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return new TextDecoder().decode(a)}
 async function ld(){
-	try{
-		const r=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+GH_TOKEN,'Accept':'application/vnd.github+json'}});
-		if(r.ok){
-			const j=await r.json();_ghSha=j.sha;
-			const d=JSON.parse(b64d(j.content));
-			localStorage.setItem(SK,JSON.stringify(d));
-			return d;
-		}else if(r.status===404){
-			const d={ex:[],pd:[]};localStorage.setItem(SK,JSON.stringify(d));
-			return d;
-		}
-		console.warn('GitHub returned '+r.status);
-	}catch(e){console.warn('GitHub unreachable: '+e.message)}
+	const tk=getToken();
+	if(tk){
+		try{
+			const r=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json'}});
+			if(r.ok){
+				const j=await r.json();_ghSha=j.sha;
+				const d=JSON.parse(b64d(j.content));
+				localStorage.setItem(SK,JSON.stringify(d));
+				return d;
+			}else if(r.status===404){
+				const d={ex:[],pd:[]};localStorage.setItem(SK,JSON.stringify(d));
+				return d;
+			}
+			console.warn('GitHub returned '+r.status);
+		}catch(e){console.warn('GitHub unreachable: '+e.message)}
+	}
 	try{const d=localStorage.getItem(SK);return d?JSON.parse(d):{ex:[],pd:[]}}catch(e){return{ex:[],pd:[]}}
 }
 async function sd(d){
 	localStorage.setItem(SK,JSON.stringify(d));
+	const tk=getToken();if(!tk)return;
 	try{
-		if(!_ghSha){try{const r=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+GH_TOKEN,'Accept':'application/vnd.github+json'}});if(r.ok){const j=await r.json();_ghSha=j.sha}}catch(e){}}
+		if(!_ghSha){try{const r=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json'}});if(r.ok){const j=await r.json();_ghSha=j.sha}}catch(e){}}
 		const body={message:'update data',content:b64e(JSON.stringify(d))};
 		if(_ghSha)body.sha=_ghSha;
-		const r=await fetch(GH_URL,{method:'PUT',headers:{'Authorization':'Bearer '+GH_TOKEN,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+		const r=await fetch(GH_URL,{method:'PUT',headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)});
 		if(r.ok){const j=await r.json();_ghSha=j.content.sha}
 		else{console.warn('GitHub save returned '+r.status)}
 	}catch(e){console.warn('GitHub save failed: '+e.message)}
