@@ -1,1 +1,1 @@
-{"ex":[{"id":999,"date":"2026-07-01","type":"running","duration":30}],"pd":[{"id":1782909041788,"startDate":"2026-07-01","endDate":"2026-07-01","flow":"medium","symptoms":[],"notes":""}]}
+{"ex":[{"id":999,"date":"2026-07-01","type":"running","duration":30},{"id":1782909069369,"date":"2026-07-01","type":"yoga","duration":30,"intensity":"moderate","notes":""}],"pd":[{"id":1782909041788,"startDate":"2026-07-01","endDate":"2026-07-01","flow":"medium","symptoms":[],"notes":""}]}
