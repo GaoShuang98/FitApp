@@ -1,0 +1,14 @@
+<script>
+'use strict';
+const SK='luna_v1';
+function ld(){try{const d=localStorage.getItem(SK);return d?JSON.parse(d):{ex:[],pd:[]}}catch(e){return{ex:[],pd:[]}}}
+function sd(d){localStorage.setItem(SK,JSON.stringify(d))}
+let D=ld();
+const fmt=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day};
+const now=()=>fmt(new Date());
+const im={running:'🏃',walking:'🚶',yoga:'🧘',swimming:'🏊',cycling:'🚴',gym:'🏋️',dancing:'💃',aerobic:'🏋',pilates:'🤸',hiking:'🥾',jump_rope:'🪢',rowing:'🚣',badminton:'🏸',custom:'📝'};
+const nm={running:'跑步',walking:'散步',yoga:'瑷伽',swimming:'游泳',cycling:'骑行',gym:'力量训练',dancing:'跳舞',aerobic:'跳操',pilates:'普拉提',hiking:'徒步',jump_rope:'散步0',rowing:'散步1',badminton:'散步2',custom:'散步3'};
+const icm={running:'run',walking:'walk',yoga:'yoga',swimming:'swim',cycling:'cyc',gym:'gym',dancing:'run',aerobic:'run',pilates:'yoga',hiking:'walk',jump_rope:'run',rowing:'swim',badminton:'run',custom:'run'};
+const iv={'light':'散步4','moderate':'散步5','intense':'散步6'};
+const fv={'light':'散步7','medium':'散步8','heavy':'散步9'};
+const sv={'cramps':'瑷伽0','headache':'瑷伽1','fatigue':'瑷伽2','bloating':'瑷伽3','mood':'瑷伽4','backache':'瑷伽5'};
