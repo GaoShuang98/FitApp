@@ -762,14 +762,20 @@ r+='</tr>';rows+=r;
 		clearTimeout(_dayPopupTimer);
 		_dayPopupTimer=setTimeout(()=>{pop.style.opacity='0';setTimeout(()=>{pop.style.display='none'},200)},2000);
 	}
-function re(){
-	document.getElementById('eddisp').textContent='📅 '+now();
-	document.getElementById('exDate').value=now();document.getElementById('exDur').value=30;
-	document.getElementById('exNotes').value='';document.getElementById('exType').value='running';
-	document.querySelectorAll('#igrp .ibtn').forEach(b=>b.classList.remove('sel'));
-	document.querySelector('#igrp .ibtn[data-v="moderate"]').classList.add('sel');
-	eid=null;document.getElementById('btnEx').textContent='记录运动';rte();drawWeekChart();
+function setSelVal(selId,val){
+	const sel=document.getElementById(selId);if(!sel)return;
+	sel.value=val;
+	const trig=sel.parentNode?.querySelector('.cs-trigger');
+	if(trig){const opt=sel.querySelector('option[value="'+val+'"]');if(opt)trig.innerHTML=opt.textContent+'<span style="display:none">_</span>'}
 }
+function re(){
+		document.getElementById('eddisp').textContent='📅 '+now();
+		document.getElementById('exDate').value=now();document.getElementById('exDur').value=30;
+		document.getElementById('exNotes').value='';setSelVal('exType','running');
+		document.querySelectorAll('#igrp .ibtn').forEach(b=>b.classList.remove('sel'));
+		document.querySelector('#igrp .ibtn[data-v="moderate"]').classList.add('sel');
+		eid=null;document.getElementById('btnEx').textContent='记录运动';rte();drawWeekChart();
+	}
 function drawWeekChart(){
 	const days=['日','一','二','三','四','五','六'],wchart=document.getElementById('wchart');
 	if(!wchart)return;wchart.innerHTML='';
@@ -789,7 +795,7 @@ if(eid!==null){const i=D.ex.findIndex(e=>e.id===eid);if(i!==-1){if(type==='custo
 else{if(type==='custom')D.ex.push({id:Date.now(),date,type:'custom',duration:dur,intensity:inten,notes,customName:customName});else D.ex.push({id:Date.now(),date,type,duration:dur,intensity:inten,notes})}
 sd(D);re();rd();
 });
-function edite(id){const e=D.ex.find(x=>x.id===id);if(!e)return;document.getElementById('exDate').value=e.date;document.getElementById('exType').value=e.type==='custom'?'custom':e.type;if(e.customName){document.getElementById('exCustom').value=e.customName;document.getElementById('exCustom').style.display=''}document.getElementById('exDur').value=e.duration;document.getElementById('exNotes').value=e.notes||'';document.querySelectorAll('#igrp .ibtn').forEach(b=>b.classList.remove('sel'));const b=document.querySelector('#igrp .ibtn[data-v="'+e.intensity+'"]');if(b)b.classList.add('sel');eid=id;document.getElementById('btnEx').textContent='更新运动';document.getElementById('pg-ex').scrollIntoView({behavior:'smooth'})}
+function edite(id){const e=D.ex.find(x=>x.id===id);if(!e)return;document.getElementById('exDate').value=e.date;setSelVal('exType',e.type==='custom'?'custom':e.type);if(e.customName){document.getElementById('exCustom').value=e.customName;document.getElementById('exCustom').style.display=''}document.getElementById('exDur').value=e.duration;document.getElementById('exNotes').value=e.notes||'';document.querySelectorAll('#igrp .ibtn').forEach(b=>b.classList.remove('sel'));const b=document.querySelector('#igrp .ibtn[data-v="'+e.intensity+'"]');if(b)b.classList.add('sel');eid=id;document.getElementById('btnEx').textContent='更新运动';document.getElementById('pg-ex').scrollIntoView({behavior:'smooth'})}
 function dele(id){if(confirm('删除这条记录？')){D.ex=D.ex.filter(e=>e.id!==id);sd(D);re();rd()}}
 document.querySelectorAll('#igrp .ibtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#igrp .ibtn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')}));
 document.getElementById('exType').addEventListener('change',()=>{const v=document.getElementById('exType').value;document.getElementById('exCustom').style.display=v==='custom'?'':'none'});
