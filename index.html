@@ -656,14 +656,20 @@ async function sd(d){
 	const tk=getToken();
 	if(!tk){syncToast('☁️ 未配置同步，数据仅保存在本地',false);updateSyncBtn();return}
 	try{
-		if(!_ghSha){try{const r=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json'}});if(r.ok){const j=await r.json();_ghSha=j.sha}}catch(e){}}
+		// 每次保存前先获取最新 SHA，避免覆盖他人的更新
+		try{const r2=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json'}});if(r2.ok){const j2=await r2.json();_ghSha=j2.sha}}catch(e){}
 		const body={message:'update data',content:b64e(JSON.stringify(d))};
 		if(_ghSha)body.sha=_ghSha;
-		const r=await fetch(GH_URL,{method:'PUT',headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+		let r=await fetch(GH_URL,{method:'PUT',headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+		// SHA 冲突 → 重试一次
+		if((r.status===409||r.status===422)&&_ghSha){
+			try{const rf=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json'}});if(rf.ok){const jf=await rf.json();_ghSha=jf.sha;body.sha=_ghSha;r=await fetch(GH_URL,{method:'PUT',headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)})}}catch(e){}
+		}
 		if(r.ok){const j=await r.json();_ghSha=j.content.sha;syncToast('✅ 已同步到云端',true)}
+		else if(r.status===409||r.status===422){syncToast('⚠️ 云端数据已变更，请刷新页面后重试',false)}
 		else{syncToast('❌ 同步失败('+r.status+')',false)}
 	}catch(e){syncToast('❌ 无法连接云端，仅保存在本地',false)}
-	}
+}
 	const fmt=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day};
 const now=()=>fmt(new Date());
 const im={running:'🏃',walking:'🚶',yoga:'🧘',swimming:'🏊',cycling:'🚴',gym:'🏋力量训练',dancing:'💃',pilates:'🤸',hiking:'🥾',aerobic:'🏋',jump_rope:'🪢',rowing:'🚣',badminton:'🏸',custom:'📝'};
