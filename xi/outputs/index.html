@@ -106,7 +106,7 @@ box-shadow:0 2px 8px rgba(255,159,10,0.25)
 background:var(--gls-card);backdrop-filter:blur(50px) saturate(1.6);-webkit-backdrop-filter:blur(50px) saturate(1.6);
 border:1px solid var(--gb);border-radius:var(--r3);padding:22px;
 box-shadow:var(--gsh),inset 0 1px 0 rgba(255,255,255,0.03);
-transition:all var(--e2);position:relative;overflow:visible
+transition:all var(--e2);position:relative;overflow:hidden
 }
 .card::after{
 content:'';position:absolute;top:0;left:0;right:0;height:1px;
@@ -350,69 +350,12 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 .hm-month{font-size:9px;color:var(--t3);text-align:left;padding-top:2px}
 .heatmap-legend{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:10px;color:var(--t2)}
 .heatmap-legend .leg-cell{width:10px;height:10px;border-radius:2px;flex-shrink:0}
-
-/* ===== Login Gate ===== */
-.login-overlay{
-position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
-background:radial-gradient(ellipse 90% 70% at 15% 15%,rgba(80,80,110,0.25),transparent 55%),
-radial-gradient(ellipse 80% 60% at 85% 85%,rgba(60,60,85,0.2),transparent 55%),
-linear-gradient(175deg,#1c1c26 0%,#1a1a24 30%,#16161f 60%,#1b1b25 100%);
-backdrop-filter:blur(20px)
-}
-.login-card{
-width:90%;max-width:340px;padding:34px 28px;border-radius:var(--r4);
-background:var(--gls-card);backdrop-filter:blur(50px) saturate(1.6);-webkit-backdrop-filter:blur(50px) saturate(1.6);
-border:1px solid var(--gb);box-shadow:var(--gsh-lift),inset 0 1px 0 rgba(255,255,255,0.05);
-text-align:center;animation:loginIn 0.5s var(--e2)
-}
-@keyframes loginIn{from{opacity:0;transform:translateY(20px) scale(0.96)}to{opacity:1;transform:translateY(0) scale(1)}}
-.login-logo{
-width:64px;height:64px;border-radius:18px;margin:0 auto 18px;
-background:linear-gradient(135deg,var(--p1),var(--p3));
-display:flex;align-items:center;justify-content:center;font-size:32px;
-box-shadow:0 6px 24px rgba(255,55,95,0.3)
-}
-.login-card h2{font-size:21px;font-weight:640;letter-spacing:-0.4px;margin-bottom:4px;color:var(--t1)}
-.login-card .login-sub{font-size:13px;color:var(--t2);margin-bottom:22px;font-weight:460}
-.login-input{
-width:100%;padding:13px 15px;border:1px solid var(--gb);border-radius:var(--r1);
-font-size:15px;font-family:var(--f);background:var(--gls1);color:var(--t1);
-outline:none;transition:all var(--e1);letter-spacing:1px;text-align:center;margin-bottom:10px
-}
-.login-input:focus{border-color:var(--p1);box-shadow:0 0 0 3px var(--cys),0 0 20px var(--cys)}
-.login-input.shake{animation:shake 0.4s}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
-.login-btn{
-width:100%;padding:13px;border:none;border-radius:var(--r1);font-size:15px;font-weight:540;
-font-family:var(--f);cursor:pointer;transition:all var(--e1);
-background:linear-gradient(135deg,var(--p1),var(--p3));color:#fff
-}
-.login-btn:hover{filter:brightness(1.1);transform:translateY(-1px);box-shadow:0 6px 24px rgba(255,55,95,0.35)}
-.login-err{font-size:12px;color:var(--cy);margin-top:10px;min-height:16px;opacity:0;transition:opacity var(--e1)}
-.login-err.show{opacity:1}
-.login-hint{font-size:11px;color:var(--t3);margin-top:16px}
-.app.hidden{display:none}
-.logout-btn{
-border:none;background:none;color:var(--t3);font-size:11px;cursor:pointer;
-padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);margin-top:6px
-}
-.logout-btn:hover{color:var(--cy);background:var(--cys)}
+.heatmap-legend .leg-cell{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 </style>
 </head>
 <body>
 <div class="bg-wallpaper"></div>
-<div class="login-overlay" id="loginOverlay">
-<div class="login-card">
-<div class="login-logo">🌙</div>
-<h2>Luna</h2>
-<div class="login-sub">请输入密码进入</div>
-<input type="password" class="login-input" id="loginInput" placeholder="输入密码" autocomplete="off" autofocus>
-<button class="login-btn" id="loginBtn">进入</button>
-<div class="login-err" id="loginErr">密码错误，请重试</div>
-<div class="login-hint">仅限家庭成员使用</div>
-</div>
-</div>
-<div class="app hidden" id="appRoot">
+<div class="app">
 <nav class="side">
 <div class="side-logo"><div class="li">🌙</div><h1>Luna</h1></div>
 <div class="side-nav">
@@ -428,7 +371,6 @@ padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);
 <button class="tbtn" data-t="light" title="亮色模式">☀️</button>
 <button class="tbtn" data-t="colorful" title="彩色模式">🌈</button>
 </div>
-<button class="logout-btn" id="logoutBtn">🔒 退出登录</button>
 </div>
 </nav>
 <main class="main">
@@ -436,11 +378,7 @@ padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);
 <section class="pg act" id="pg-dash">
 <div class="top"><h2>概览</h2><span class="ddisp" id="tdisp"></span></div>
 <div class="sgrid" id="dstats"></div>
-<div class="card heatmap-wrap">
-<div class="heatmap-header"><h3>📊 运动热力图</h3><span class="hm-total" id="hmTotal"></span></div>
-<table class="heatmap-table"><tbody id="hmBody"></tbody></table>
-<div class="heatmap-legend">少<span class="leg-cell" style="background:var(--gls1)"></span><span class="leg-cell" style="background:rgba(48,209,88,0.15)"></span><span class="leg-cell" style="background:rgba(48,209,88,0.3)"></span><span class="leg-cell" style="background:rgba(48,209,88,0.55)"></span><span class="leg-cell" style="background:var(--ex)"></span>多</div>
-</div>
+<div class="card"><h3 style="font-size:15px;font-weight:560;margin-bottom:12px">📊 本周运动</h3><div id="wchart" style="display:flex;align-items:flex-end;gap:7px;height:130px;padding-top:8px"></div></div>
 <div class="card"><h3 style="font-size:15px;font-weight:560;margin-bottom:10px">🕐 最近动态</h3><div id="recent"></div></div>
 </section>
 
@@ -451,14 +389,18 @@ padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);
 <div class="card">
 <h3 style="font-size:15px;font-weight:560;margin-bottom:14px">✏️ 添加运动</h3>
 <div class="fg"><label>日期</label><input type="date" class="fi" id="exDate"></div>
-<div class="fg"><label>类型</label><select class="fs" id="exType"><option value="running">🏋 跳操</option><option value="pilates">🏃 跑步</option><option value="walking">🚶 散步</option><option value="yoga">🧘 瑜伽</option><option value="swimming">🏊 游泳</option><option value="cycling">🚴 骑行</option><option value="gym">🏋️ 力量</option><option value="dancing">💃 跳舞</option><option value="aerobic">🤸 普拉提</option><option value="hiking">🥾 徒步</option><option value="jump_rope">🪢 跳绳</option><option value="rowing">🚣 划船</option><option value="badminton">🏸 羽毛球</option><option value="custom">📝 自定义</option></select><input type="text" class="fi" id="exCustom" placeholder="输入运动名称" style="display:none;margin-top:8px"></div>
+<div class="fg"><label>类型</label><select class="fs" id="exType"><option value="running">🏃 跑步</option><option value="walking">🚶 散步</option><option value="yoga">🧘 瑜伽</option><option value="swimming">🏊 游泳</option><option value="cycling">🚴 骑行</option><option value="gym">🏋️ 力量</option><option value="dancing">💃 跳舞</option><option value="aerobic">🏋 跳操</option><option value="pilates">🤸 普拉提</option><option value="hiking">🥾 徒步</option><option value="jump_rope">🪢 跳绳</option><option value="rowing">🚣 划船</option><option value="badminton">🏸 羽毛球</option><option value="custom">📝 自定义</option></select><input type="text" class="fi" id="exCustom" placeholder="输入运动名称" style="display:none;margin-top:8px"></div>
 <div class="fg"><label>时长（分钟）</label><input type="number" class="fi" id="exDur" min="1" max="300" value="30"></div>
 <div class="fg"><label>强度</label><div class="igrp" id="igrp"><button class="ibtn" data-v="light">轻松</button><button class="ibtn sel" data-v="moderate">适中</button><button class="ibtn" data-v="intense">高强度</button></div></div>
 <div class="fg"><label>备注</label><textarea class="ft" id="exNotes" placeholder="记录一下感受..."></textarea></div>
 <button class="btn btn-p" id="btnEx" style="width:100%">记录运动</button>
 </div>
 </div>
-<div class="card"><h3 style="font-size:15px;font-weight:560;margin-bottom:12px">📊 本周运动</h3><div id="wchart" style="display:flex;align-items:flex-end;gap:7px;height:130px;padding-top:8px"></div></div>
+<div class="card heatmap-wrap">
+<div class="heatmap-header"><h3>📊 运动热力图</h3><span class="hm-total" id="hmTotal"></span></div>
+<table class="heatmap-table"><tbody id="hmBody"></tbody></table>
+<div class="heatmap-legend">?<span class="leg-cell" style="background:var(--gls1)"></span><span class="leg-cell" style="background:rgba(48,209,88,0.15)"></span><span class="leg-cell" style="background:rgba(48,209,88,0.3)"></span><span class="leg-cell" style="background:rgba(48,209,88,0.55)"></span><span class="leg-cell" style="background:var(--ex)"></span>?</div>
+</div>
 </section>
 
 <section class="pg" id="pg-cy">
@@ -496,76 +438,17 @@ padding:4px 8px;border-radius:6px;transition:all var(--e1);font-family:var(--f);
 
 'use strict';
 const SK='luna_v1';
-
-/* ===== 登录守卫 ===== */
-const PWD='luna520';
-const AUTH_KEY='luna_auth';
-function isAuthed(){try{return localStorage.getItem(AUTH_KEY)==='1'}catch(e){return false}}
-async function enterApp(){
-const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='none';
-document.getElementById('appRoot').classList.remove('hidden');
-await initApp();
-}
-function showLogin(){
-const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='flex';
-document.getElementById('appRoot').classList.add('hidden');
-const inp=document.getElementById('loginInput');if(inp){inp.value='';inp.focus()}
-}
-function tryLogin(){
-const v=document.getElementById('loginInput').value;
-if(v===PWD){try{localStorage.setItem(AUTH_KEY,'1')}catch(e){}enterApp()}
-else{const inp=document.getElementById('loginInput');inp.classList.remove('shake');void inp.offsetWidth;inp.classList.add('shake');inp.value='';document.getElementById('loginErr').classList.add('show')}
-}
-function initLogin(){
-if(window._loginInited)return;window._loginInited=true;
-document.getElementById('loginBtn').addEventListener('click',tryLogin);
-document.getElementById('loginInput').addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin()});
-document.getElementById('logoutBtn').addEventListener('click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
-if(isAuthed())enterApp();else showLogin();
-}
-initLogin();
-/* ===== JSONBin 云端同步 ===== */
-const ZX='$2a$10$1MyN.mkykHVvWl4Aaxdw3ejSPM4qs02arLVVzlhBge7wqRthPYaZG';
-const ZB_KEY='luna_bin_id';
-const ZB_URL='https://api.jsonbin.io/v3/b';
-function isZB(){return ZX!=='YOUR_MASTER_KEY'}
-async function ld(){
-  // 尝试从云端加载
-  if(isZB()){
-    const binId=localStorage.getItem(ZB_KEY);
-    if(binId){
-      try{
-        const r=await fetch(ZB_URL+'/'+binId+'/latest',{headers:{'X-Master-Key':ZX}});
-        if(r.ok){const j=await r.json();localStorage.setItem(SK,JSON.stringify(j.record));return j.record}
-        console.warn('Cloud load failed, using local cache');
-      }catch(e){console.warn('Cloud load failed, using local cache')}
-    }
-  }
-  // 本地缓存兜底
-  try{const d=localStorage.getItem(SK);return d?JSON.parse(d):{ex:[],pd:[]}}catch(e){return{ex:[],pd:[]}}
-}
-async function sd(d){
-  localStorage.setItem(SK,JSON.stringify(d));
-  if(!isZB())return;
-  let binId=localStorage.getItem(ZB_KEY);
-  try{
-    if(!binId){
-      const r=await fetch(ZB_URL,{method:'POST',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d)});
-      if(r.ok){const j=await r.json();binId=j.metadata.id;localStorage.setItem(ZB_KEY,binId)}
-    }else{
-      await fetch(ZB_URL+'/'+binId,{method:'PUT',headers:{'X-Master-Key':ZX,'Content-Type':'application/json'},body:JSON.stringify(d)});
-    }
-  }catch(e){console.warn('Cloud save failed, saved locally')}
-}
-let D={ex:[],pd:[]};
+function ld(){try{const d=localStorage.getItem(SK);return d?JSON.parse(d):{ex:[],pd:[]}}catch(e){return{ex:[],pd:[]}}}
+function sd(d){localStorage.setItem(SK,JSON.stringify(d))}
+let D=ld();
 const fmt=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day};
 const now=()=>fmt(new Date());
 const im={running:'🏃',walking:'🚶',yoga:'🧘',swimming:'🏊',cycling:'🚴',gym:'🏋力量训练',dancing:'💃',pilates:'🤸',hiking:'🥾',aerobic:'🏋',jump_rope:'🪢',rowing:'🚣',badminton:'🏸',custom:'📝'};
 const nm={running:'跑步',walking:'散步',yoga:'瑜伽',swimming:'游泳',cycling:'骑行',gym:'力量训练',dancing:'跳舞',aerobic:'跳操',pilates:'普拉提',hiking:'徒步',jump_rope:'跳绳',rowing:'划船',badminton:'羽毛球',custom:'自定义'};
 const icm={running:'run',walking:'walk',yoga:'yoga',swimming:'swim',cycling:'cyc',gym:'gym',dancing:'run',aerobic:'run',pilates:'yoga',hiking:'walk',jump_rope:'run',rowing:'swim',badminton:'run',custom:'run'};
-const iv={'light':'轻松','moderate':'适中','intense':'高强度'};
-const fv={'light':'少量','medium':'中量','heavy':'大量'};
-const sv={'cramps':'腹痛','headache':'头痛','fatigue':'疲劳','bloating':'腹胀','mood':'情绪波动','backache':'腰酸'};
+const iv={'light':'轻轻松','moderate':'适适中','intense':'高高强度'};
+const fv={'light':'少少量','medium':'中中量','heavy':'大大量'};
+const sv={'cramps':'腹腹痛','headache':'头头痛','fatigue':'疲疲劳','bloating':'腹腹胀','mood':'情情绪波动','backache':'腰腰酸'};
 
 function nav(p){
 document.querySelectorAll('.ni').forEach(b=>b.classList.remove('act'));
@@ -591,7 +474,8 @@ document.getElementById('dstats').innerHTML=
 '<div class="card sc"><div class="sv ex">'+wm+'</div><div class="sl">本周运动（分）</div><div class="ss">'+wc+' 次</div></div>'+
 '<div class="card sc"><div class="sv cy">'+(pds.length||'0')+'</div><div class="sl">经期记录</div><div class="ss">'+ci+'</div></div>'+
 '<div class="card sc"><div class="sv wm">'+(lp?Math.round((new Date(lp.endDate||lp.startDate)-new Date(lp.startDate))/86400000)+1:'-')+'</div><div class="sl">最近经期天数</div></div>';
-renderHeatmap();
+const days2=['日','一','二','三','四','五','六'],ch2=document.getElementById('wchart');ch2.innerHTML='';
+for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=fmt(d),de=D.ex.filter(e=>e.date===ds),m=de.reduce((s,e)=>s+e.duration,0),h=Math.max(3,Math.min(120,m*1.8));ch2.innerHTML+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:11px;color:var(--t2)">'+m+'</span><div style="width:100%;max-width:40px;height:'+h+'px;background:'+(i===0?'var(--ex)':'rgba(52,199,89,0.3)')+';border-radius:7px 7px 3px 3px"></div><span style="font-size:10px;color:var(--t3)">'+days2[d.getDay()]+'</span></div>'}
 const rc=[...D.ex.map(e=>({...e,it:'ex'})),...D.pd.map(p=>({...p,it:'pd'}))].sort((a,b)=>new Date(b.date||b.startDate)-new Date(a.date||a.startDate)).slice(0,6);
 const ra=document.getElementById('recent');
 if(rc.length===0){ra.innerHTML='<div class="emp"><div class="eic">📝</div><p>还没有记录</p></div>';return}
@@ -630,17 +514,13 @@ r+='</tr>';rows+=r;
 body.innerHTML=monthRow+rows;total.textContent='总计 '+totalMin+' 分钟';
 }
 function re(){
-	document.getElementById('eddisp').textContent='📅 '+now();
-	document.getElementById('exDate').value=now();document.getElementById('exDur').value=30;
-	document.getElementById('exNotes').value='';document.getElementById('exType').value='running';
-	document.querySelectorAll('#igrp .ibtn').forEach(b=>b.classList.remove('sel'));
-	document.querySelector('#igrp .ibtn[data-v="moderate"]').classList.add('sel');
-	eid=null;document.getElementById('btnEx').textContent='记录运动';rte();drawWeekChart();
+document.getElementById('eddisp').textContent='📅 '+now();
+document.getElementById('exDate').value=now();document.getElementById('exDur').value=30;
+document.getElementById('exNotes').value='';document.getElementById('exType').value='running';
+document.querySelectorAll('#igrp .ibtn').forEach(b=>b.classList.remove('sel'));
+document.querySelector('#igrp .ibtn[data-v="moderate"]').classList.add('sel');
+eid=null;document.getElementById('btnEx').textContent='记录运动';rte();renderHeatmap();
 }
-function drawWeekChart(){
-	const days=['日','一','二','三','四','五','六'],wchart=document.getElementById('wchart');
-	if(!wchart)return;wchart.innerHTML='';
-	for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=fmt(d),de=D.ex.filter(e=>e.date===ds),m=de.reduce((s,e)=>s+e.duration,0),h=Math.max(3,Math.min(120,m*1.8));wchart.innerHTML+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:11px;color:var(--t2)">'+m+'</span><div style="width:100%;max-width:40px;height:'+h+'px;background:'+(i===0?'var(--ex)':'rgba(52,199,89,0.3)')+';border-radius:7px 7px 3px 3px"></div><span style="font-size:10px;color:var(--t3)">'+days[d.getDay()]+'</span></div>'}}
 function rte(){
 const t=now(),list=D.ex.filter(e=>e.date===t).sort((a,b)=>b.id-a.id),el=document.getElementById('todayEx');
 if(list.length===0){el.innerHTML='<div class="emp"><div class="eic">💪</div><p>今天还没有运动</p></div>';return}
@@ -683,7 +563,7 @@ const prs=new Set(),ovs=new Set();
 if(D.pd.length>=2){const ps=D.pd.sort((a,b)=>a.startDate.localeCompare(b.startDate));let tc2=0;for(let i=1;i<ps.length;i++)tc2+=Math.round((new Date(ps[i].startDate)-new Date(ps[i-1].startDate))/86400000);const ac=Math.round(tc2/(ps.length-1))||28;const ls=new Date(ps[ps.length-1].startDate),ps2=new Date(ls);ps2.setDate(ps2.getDate()+ac);const pe=new Date(ps2);pe.setDate(pe.getDate()+4);for(let d=new Date(ps2);d<=pe;d.setDate(d.getDate()+1))prs.add(fmt(d));const ov=new Date(ps2);ov.setDate(ov.getDate()-14);for(let i=-2;i<=2;i++){const od=new Date(ov);od.setDate(od.getDate()+i);ovs.add(fmt(od))}}
 const pd2=new Date(cy,cm,0).getDate();
 for(let i=fd-1;i>=0;i--){h+='<div class="cd om">'+(pd2-i)+'</div>'}
-for(let day=1;day<=dim2;day++){const ds=cy+'-'+String(cm+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');let cls='cd';if(ds===tn)cls+=' today';if(pds.has(ds)){cls+=' prd';if(pss.has(ds)&&pes.has(ds))cls+=' prd-1';else if(pss.has(ds))cls+=' prd-s';else if(pes.has(ds))cls+=' prd-e'}if(prs.has(ds))cls+=' pred';if(ovs.has(ds)&&!pds.has(ds)&&!prs.has(ds))cls+=' ovu';h+='<div class="'+cls+'" data-date="'+ds+'" onclick="cdClick(\''+ds+'\')">'+day+'</div>'}
+for(let day=1;day<=dim2;day++){const ds=cy+'-'+String(cm+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');let cls='cd';if(ds===tn)cls+=' today';if(pds.has(ds)){cls+=' prd';if(pss.has(ds)&&pes.has(ds))cls+=' prd-1';else if(pss.has(ds))cls+=' prd-s';else if(pes.has(ds))cls+=' prd-e'}if(prs.has(ds))cls+=' pred';if(ovs.has(ds)&&!pds.has(ds)&&!prs.has(ds))cls+=' ovu';h+='<div class="'+cls+'" data-date="'+ds+'" onclick="cdClick(''+ds+'')">'+day+'</div>'}
 const rem=42-(fd+dim2);for(let i=1;i<=rem;i++){h+='<div class="cd om">'+i+'</div>'}
 g.innerHTML=h;
 }
@@ -730,12 +610,6 @@ h+='</div>';document.getElementById('cStats').innerHTML=h;
 function editp(id){const p=D.pd.find(x=>x.id===id);if(!p)return;document.getElementById('pStart').value=p.startDate;document.getElementById('pEnd').value=p.endDate||'';document.getElementById('pFlow').value=p.flow||'medium';document.getElementById('pNotes').value=p.notes||'';ssym=p.symptoms?[...p.symptoms]:[];document.querySelectorAll('#stags .stag').forEach(t=>t.classList.toggle('sel',ssym.includes(t.dataset.s)));pid=id;document.getElementById('btnPeriod').style.display='none';document.getElementById('btnUpdPeriod').style.display='';document.getElementById('btnCancelPeriod').style.display=''}
 function delp(id){if(confirm('删除这条经期记录？')){D.pd=D.pd.filter(p=>p.id!==id);sd(D);rc();rd()}}
 
-// 历史页辅助：编辑/删除后跳转并刷新
-function editeH(id){nav('ex');setTimeout(()=>edite(id),50)}
-function deleH(id){if(confirm('删除这条运动记录？')){D.ex=D.ex.filter(e=>e.id!==id);sd(D);rd();re();rh()}}
-function editpH(id){nav('cy');setTimeout(()=>editp(id),50)}
-function delpH(id){if(confirm('删除这条经期记录？')){D.pd=D.pd.filter(p=>p.id!==id);sd(D);rd();rc();rh()}}
-
 let hf='all';
 function rh(filter){if(filter)hf=filter;
 document.querySelectorAll('.hfilt .fchip').forEach(c=>c.classList.toggle('act',c.dataset.filter===hf));
@@ -744,7 +618,7 @@ if(hf==='all'||hf==='cycle')D.pd.forEach(p=>items.push({...p,it:'pd'}));
 items.sort((a,b)=>new Date(b.date||b.startDate)-new Date(a.date||a.startDate));
 const el=document.getElementById('timeline');
 if(items.length===0){el.innerHTML='<div class="emp"><div class="eic">📋</div><p>暂无记录</p></div>';return}
-	el.innerHTML=items.map(r=>{if(r.it==='pd')return '<div class="ti"><div class="td">'+r.startDate+(r.endDate!==r.startDate?' ~ '+r.endDate:'')+'</div><div class="tc"><h4>🌸 经期</h4><p>流量: '+fv[r.flow||'medium']+((r.symptoms||[]).length?' · '+r.symptoms.map(s=>sv[s]||s).join('、'):'')+(r.notes?' · '+r.notes:'')+'</p></div><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><button class="btn btn-d" onclick="editpH('+r.id+')">编辑</button><button class="btn btn-d" onclick="delpH('+r.id+')">✕</button></div></div>';return '<div class="ti"><div class="td">'+r.date+'</div><div class="tc"><h4>'+im[r.type]+' '+(nm[r.type]||(r.customName||'自定义'))+' · '+r.duration+'分钟</h4><p>'+iv[r.intensity||'moderate']+(r.notes?' · '+r.notes:'')+'</p></div><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><button class="btn btn-d" onclick="editeH('+r.id+')">编辑</button><button class="btn btn-d" onclick="deleH('+r.id+')">✕</button></div></div>'}).join('');
+el.innerHTML=items.map(r=>{if(r.it==='pd')return '<div class="ti"><div class="td">'+r.startDate+(r.endDate!==r.startDate?' ~ '+r.endDate:'')+'</div><div class="tc"><h4>🌸 经期</h4><p>流量: '+fv[r.flow||'medium']+((r.symptoms||[]).length?' · '+r.symptoms.map(s=>sv[s]||s).join('、'):'')+(r.notes?' · '+r.notes:'')+'</p></div></div>';return '<div class="ti"><div class="td">'+r.date+'</div><div class="tc"><h4>'+im[r.type]+' '+(nm[r.type]||(r.customName||'自定义'))+' · '+r.duration+'分钟</h4><p>'+iv[r.intensity||'moderate']+(r.notes?' · '+r.notes:'')+'</p></div></div>'}).join('');
 }
 document.querySelectorAll('.hfilt .fchip').forEach(c=>c.addEventListener('click',()=>rh(c.dataset.filter)));
 
@@ -779,15 +653,8 @@ const selOpt=sel.querySelector('option[selected]')||sel.querySelector('option');
 if(selOpt)trigger.innerHTML=selOpt.textContent||selOpt.label;
 });
 }
-// Close custom dropdowns on outside click
-document.addEventListener('click',()=>{
-document.querySelectorAll('.cs-drop.open').forEach(d=>{
-d.classList.remove('open');
-d.previousElementSibling?.classList.remove('open');
-});
-});
-
-initCustomSelects();
+// click handler disabled
+// initCustomSelects skipped for debugging
 
 // Theme switcher
 (function(){
@@ -807,10 +674,7 @@ b.classList.add('active');
 });
 })();
 
-async function initApp(){
-D=await ld();
 document.getElementById('exDate').value=now();document.getElementById('pStart').value=now();rd();
-}
 </script>
 </body>
 </html>
