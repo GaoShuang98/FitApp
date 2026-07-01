@@ -805,7 +805,7 @@ function rc(){
 document.getElementById('cddisp').textContent='📅 '+now();
 const nd=new Date();cy=nd.getFullYear();cm=nd.getMonth();
 rcal();document.getElementById('pStart').value=now();document.getElementById('pEnd').value='';
-document.getElementById('pFlow').value='medium';document.getElementById('pNotes').value='';ssym=[];
+setSelVal('pFlow','medium');document.getElementById('pNotes').value='';ssym=[];
 document.querySelectorAll('#stags .stag').forEach(t=>t.classList.remove('sel'));
 pid=null;document.getElementById('btnPeriod').style.display='';
 document.getElementById('btnUpdPeriod').style.display='none';
@@ -844,7 +844,7 @@ document.getElementById('btnUpdPeriod').style.display='none';document.getElement
 });
 document.getElementById('btnCancelPeriod').addEventListener('click',()=>{
 pid=null;document.getElementById('pStart').value=now();document.getElementById('pEnd').value='';
-document.getElementById('pFlow').value='medium';document.getElementById('pNotes').value='';ssym=[];
+setSelVal('pFlow','medium');document.getElementById('pNotes').value='';ssym=[];
 document.querySelectorAll('#stags .stag').forEach(t=>t.classList.remove('sel'));
 document.getElementById('btnPeriod').style.display='';document.getElementById('btnUpdPeriod').style.display='none';
 document.getElementById('btnCancelPeriod').style.display='none';
@@ -866,7 +866,7 @@ h+='<div style="margin-top:10px;max-height:180px;overflow-y:auto">';
 [...ps].reverse().slice(0,5).forEach(p=>{const days3=Math.round((new Date(p.endDate||p.startDate)-new Date(p.startDate))/86400000)+1;h+='<div class="pli"><div class="pdb"></div><div style="flex:1"><div style="font-size:12px;font-weight:500">'+p.startDate+(p.endDate!==p.startDate?' ~ '+p.endDate:'')+' ('+days3+'天)</div><div style="font-size:10px;color:var(--t2)">'+fv[p.flow||'medium']+((p.symptoms||[]).length?' · '+p.symptoms.map(s=>sv[s]||s).join('、'):'')+'</div></div><button class="btn btn-d" onclick="editp('+p.id+')">编辑</button><button class="btn btn-d" onclick="delp('+p.id+')">✕</button></div>'});
 h+='</div>';document.getElementById('cStats').innerHTML=h;
 }
-function editp(id){const p=D.pd.find(x=>x.id===id);if(!p)return;document.getElementById('pStart').value=p.startDate;document.getElementById('pEnd').value=p.endDate||'';document.getElementById('pFlow').value=p.flow||'medium';document.getElementById('pNotes').value=p.notes||'';ssym=p.symptoms?[...p.symptoms]:[];document.querySelectorAll('#stags .stag').forEach(t=>t.classList.toggle('sel',ssym.includes(t.dataset.s)));pid=id;document.getElementById('btnPeriod').style.display='none';document.getElementById('btnUpdPeriod').style.display='';document.getElementById('btnCancelPeriod').style.display=''}
+function editp(id){const p=D.pd.find(x=>x.id===id);if(!p)return;document.getElementById('pStart').value=p.startDate;document.getElementById('pEnd').value=p.endDate||'';setSelVal('pFlow',p.flow||'medium');document.getElementById('pNotes').value=p.notes||'';ssym=p.symptoms?[...p.symptoms]:[];document.querySelectorAll('#stags .stag').forEach(t=>t.classList.toggle('sel',ssym.includes(t.dataset.s)));pid=id;document.getElementById('btnPeriod').style.display='none';document.getElementById('btnUpdPeriod').style.display='';document.getElementById('btnCancelPeriod').style.display=''}
 function delp(id){if(confirm('删除这条经期记录？')){D.pd=D.pd.filter(p=>p.id!==id);sd(D);rc();rd()}}
 
 // 历史页辅助：编辑/删除后跳转并刷新
