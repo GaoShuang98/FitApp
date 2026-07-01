@@ -347,7 +347,7 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 .heatmap-cell:hover{outline:1.5px solid var(--t2);z-index:2;transform:scale(1.5)}
 .heatmap-cell[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10px;font-family:var(--f);color:var(--t1);background:rgba(26,26,36,0.95);backdrop-filter:blur(20px);border:1px solid var(--gb);border-radius:6px;padding:4px 8px;pointer-events:none;z-index:10}
 .hm-label{font-size:9px;color:var(--t3);text-align:left;padding-right:6px;width:16px;line-height:13px;vertical-align:top}
-.hm-month{font-size:9px;color:var(--t3);text-align:left;padding-top:2px}
+.hm-month{font-size:9px;color:var(--t3);text-align:left;padding-top:2px;white-space:nowrap;overflow:visible}
 .heatmap-legend{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:10px;color:var(--t2)}
 .heatmap-legend .leg-cell{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 
@@ -599,19 +599,23 @@ ra.innerHTML=rc.map(r=>{if(r.it==='pd')return '<div class="ti"><div class="td">'
 
 let eid=null;
 function renderHeatmap(){
-const weeks=24,now2=new Date();now2.setHours(0,0,0,0);
-const endDay=new Date(now2);endDay.setDate(endDay.getDate()-(endDay.getDay()+1)%7+6);
-const startDay=new Date(endDay);startDay.setDate(startDay.getDate()-weeks*7+1);
-const body=document.getElementById('hmBody'),total=document.getElementById('hmTotal');
-const todayStr=now();const dayData={};let totalMin=0;
-D.ex.forEach(e=>{const m=e.duration||0;dayData[e.date]=(dayData[e.date]||0)+m});
-const dlabels=['','一','','三','','五',''];
-let monthRow='<tr><td></td>';let lastMonth=-1;
-for(let w=0;w<weeks;w++){
-const d=new Date(startDay);d.setDate(d.getDate()+w*7);const m=d.getMonth();
-if(m!==lastMonth){lastMonth=m;monthRow+='<td class="hm-month" colspan="7">'+['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'][m]+'</td>'}
-}
-monthRow+='</tr>';
+	const weeks=24,now2=new Date();now2.setHours(0,0,0,0);
+	const endDay=new Date(now2);endDay.setDate(endDay.getDate()-(endDay.getDay()+1)%7+6);
+	const startDay=new Date(endDay);startDay.setDate(startDay.getDate()-weeks*7+1);
+	const body=document.getElementById('hmBody'),total=document.getElementById('hmTotal');
+	const todayStr=now();const dayData={};let totalMin=0;
+	D.ex.forEach(e=>{const m=e.duration||0;dayData[e.date]=(dayData[e.date]||0)+m});
+	const dlabels=['','一','','三','','五',''];
+	const mnames=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+	// 逐列计算月份（不再用 colspan，精准对齐）
+	let monthRow='<tr><td></td>';
+	let lastM=-1;
+	for(let w=0;w<weeks;w++){
+		const d=new Date(startDay);d.setDate(d.getDate()+w*7);const m=d.getMonth();
+		if(m!==lastM){lastM=m;monthRow+='<td class="hm-month">'+mnames[m]+'</td>'}
+		else{monthRow+='<td class="hm-month"></td>'}
+	}
+	monthRow+='</tr>';
 let rows='';
 for(let dow=0;dow<7;dow++){
 let r='<tr>';
