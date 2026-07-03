@@ -521,8 +521,10 @@ async function enterApp(){
 	if(!hasToken())showTokenSetup();
 }
 function showTokenSetup(){
+	const has=hasToken();
 	document.getElementById('tokenSetup').style.display='flex';
-	document.getElementById('tokenInput').focus();
+	document.getElementById('tokenInput').value=has?getToken():'';
+	if(!has)document.getElementById('tokenInput').focus();
 	document.getElementById('tokenErr').classList.remove('show');
 }
 function hideTokenSetup(){
@@ -534,10 +536,14 @@ function saveToken(){
 		document.getElementById('tokenErr').classList.add('show');
 		return;
 	}
-	try{localStorage.setItem(GT_KEY,v)}catch(e){}
+	try{localStorage.setItem(GT_KEY,v)}catch(e){alert('无法保存，请检查浏览器是否允许本地存储')}
 	hideTokenSetup();
+	document.getElementById('tokenInput').value='';
 	// 立即尝试一次云端同步
 	ld().then(d=>{D=d;rd()});
+	// 保存反馈
+	const lb=document.getElementById('settingsBtn');
+	if(lb){lb.textContent='✅ 已连接';setTimeout(()=>{lb.textContent='⚙️ 同步设置'},2000)}
 }
 function showLogin(){
 const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='flex';
