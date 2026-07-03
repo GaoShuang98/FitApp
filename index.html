@@ -235,6 +235,27 @@ position:relative;font-weight:440;color:var(--t1)
 .ld.pdd{border:1.5px dashed var(--cy);background:transparent}
 .ld.od{border:2px solid var(--ov);background:transparent}
 
+/* ===== Calendar View Switcher ===== */
+.ch-center{display:flex;flex-direction:column;align-items:center;gap:6px}
+.cv-switch{display:flex;background:var(--gls1);border-radius:20px;padding:2px;border:1px solid var(--gb)}
+.cv-btn{border:none;background:transparent;color:var(--t2);font-size:12px;padding:4px 12px;border-radius:18px;cursor:pointer;font-family:var(--f);transition:all var(--e1);font-weight:460}
+.cv-btn.act{background:var(--gls2);color:var(--t1);font-weight:560;box-shadow:0 1px 4px rgba(0,0,0,0.12)}
+.cv-btn:hover:not(.act){color:var(--t1)}
+
+/* ===== Year View (12 months grid) ===== */
+.ym-grid{display:grid;gap:8px}
+.ym-card{cursor:pointer;text-align:center;padding:8px 5px;border-radius:var(--r1);transition:all var(--e1);background:var(--gls1);border:1px solid transparent}
+.ym-card:hover{background:var(--gls2);border-color:var(--gb-focus)}
+.ym-card .ym-name{font-size:12px;font-weight:520;color:var(--t2);margin-bottom:4px}
+.ym-mini{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;font-size:8px;line-height:1.4}
+.ym-mh{color:var(--t3);font-weight:460;font-size:7px}
+.ym-md{display:flex;align-items:center;justify-content:center;border-radius:50%;position:relative;padding:1px 0}
+.ym-md.om{color:var(--t3);opacity:0.3}
+.ym-md.today{font-weight:640;color:var(--ex)}
+.ym-md.prd{color:var(--cy);font-weight:560}
+.ym-md.prd::after{content:'';position:absolute;bottom:0;width:2px;height:2px;border-radius:50%;background:var(--cy)}
+.ym-md.pred{color:var(--cy);opacity:0.45;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:1px;text-decoration-thickness:1px}
+
 /* ===== Period Form ===== */
 .pform{padding:18px}
 .st{font-size:15px;font-weight:560;margin-bottom:13px;letter-spacing:-0.2px;display:flex;align-items:center;gap:7px}
@@ -287,8 +308,8 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 	@media(max-width:460px){
 	.sgrid{grid-template-columns:1fr 1fr}.sv{font-size:28px}.top h2{font-size:18px}.cg{gap:2px}.cd{font-size:11px}
 	.heatmap-table{border-spacing:2px}
-	.hm-month{font-size:8px}.heatmap-header h3{font-size:13px}
-	}
+		.hm-month{font-size:8px}.heatmap-header h3{font-size:13px}
+		}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.08);border-radius:10px}
 ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.14)}
@@ -349,7 +370,7 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 	.heatmap-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;min-width:max-content}
 	.heatmap-header h3{font-size:15px;font-weight:560;flex-shrink:0}
 	.heatmap-header .hm-total{font-size:12px;color:var(--t2);flex-shrink:0;margin-left:12px}
-	.heatmap-table{border-collapse:separate;border-spacing:3px}
+	.heatmap-table{border-collapse:separate;border-spacing:2px}
 	.heatmap-table td{padding:0;line-height:0}
 	.heatmap-cell{border-radius:2px;background:var(--gls1);transition:all var(--e1);cursor:default;position:relative}
 .heatmap-cell:hover{outline:1.5px solid var(--t2);z-index:2;transform:scale(1.5)}
@@ -495,14 +516,14 @@ display:flex;align-items:center;gap:4px;font-size:12px;
 <button class="btn btn-p" id="btnEx" style="width:100%">记录运动</button>
 </div>
 </div>
-<div class="card"><h3 style="font-size:15px;font-weight:560;margin-bottom:12px">📊 本周运动</h3><div id="wchart" style="display:flex;align-items:flex-end;gap:7px;height:130px;padding-top:8px"></div></div>
+<div class="card"><h3 style="font-size:15px;font-weight:560;margin-bottom:12px">📊 本周运动</h3><div id="wchart" style="display:flex;gap:7px;height:148px;padding-bottom:4px"></div></div>
 </section>
 
 <section class="pg" id="pg-cy">
 <div class="top"><h2>生理周期</h2><span class="ddisp" id="cddisp"></span></div>
 <div class="cy-layout">
 <div class="card card-flush" style="padding:18px">
-<div class="ch"><button id="cPrev">◂</button><span class="ct" id="cTitle"></span><button id="cNext">▸</button></div>
+<div class="ch"><button id="cPrev">◂</button><div class="ch-center"><span class="ct" id="cTitle"></span><div class="cv-switch"><button class="cv-btn act" data-view="month">月</button><button class="cv-btn" data-view="year">年</button></div></div><button id="cNext">▸</button></div>
 <div class="cg" id="cGrid"></div>
 <div class="leg"><span class="li2"><span class="ld pd"></span> 经期</span><span class="li2"><span class="ld pdd"></span> 预测</span><span class="li2"><span class="ld od"></span> 排卵期</span></div>
 </div>
@@ -583,14 +604,14 @@ function saveToken(){
 	try{localStorage.setItem(GT_KEY,v)}catch(e){alert('无法保存，请检查浏览器是否允许本地存储')}
 	hideTokenSetup();
 	document.getElementById('tokenInput').value='';
-	ld().then(d=>{D=d;rd()});
-	updateSyncBtn();
+		ld().then(d=>{D=d;rd();startAutoSync();updateSyncBtn();})
 }
-function showLogin(){
-const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='flex';
-document.getElementById('appRoot').classList.add('hidden');
-const inp=document.getElementById('loginInput');if(inp){inp.value='';inp.focus()}
-}
+	function showLogin(){
+	stopAutoSync();
+	const ov=document.getElementById('loginOverlay');if(ov)ov.style.display='flex';
+	document.getElementById('appRoot').classList.add('hidden');
+	const inp=document.getElementById('loginInput');if(inp){inp.value='';inp.focus()}
+	}
 function tryLogin(){
 const v=document.getElementById('loginInput').value;
 if(v===PWD){try{localStorage.setItem(AUTH_KEY,'1')}catch(e){}enterApp()}
@@ -627,8 +648,18 @@ let _ghSha=null;
 function getToken(){try{return localStorage.getItem(GT_KEY)||''}catch(e){return''}}
 function hasToken(){return getToken()!==''}
 function b64e(s){const b=new TextEncoder().encode(s);let r='';for(let i=0;i<b.length;i++)r+=String.fromCharCode(b[i]);return btoa(r)}
-function b64d(s){const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return new TextDecoder().decode(a)}
-async function ld(){
+	function b64d(s){const b=atob(s),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return new TextDecoder().decode(a)}
+	// 合并两份数据：按 id 去重，云端数据优先（云端是权威来源）
+	function mergeData(local,remote){
+		const exMap=new Map(),pdMap=new Map();
+		local.ex.forEach(e=>exMap.set(e.id,e));
+		local.pd.forEach(p=>pdMap.set(p.id,p));
+		// 云端数据覆盖本地同 id 记录（云端可能是对方更新的）
+		remote.ex.forEach(e=>exMap.set(e.id,e));
+		remote.pd.forEach(p=>pdMap.set(p.id,p));
+		return{ex:[...exMap.values()],pd:[...pdMap.values()]};
+	}
+	async function ld(){
 	const tk=getToken();
 	if(tk){
 		try{
@@ -663,15 +694,70 @@ async function sd(d){
 		const body={message:'update data',content:b64e(JSON.stringify(d))};
 		if(_ghSha)body.sha=_ghSha;
 		let r=await fetch(GH_URL,{method:'PUT',headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-		// SHA 冲突 → 重试一次
-		if((r.status===409||r.status===422)&&_ghSha){
-			try{const rf=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json'}});if(rf.ok){const jf=await rf.json();_ghSha=jf.sha;body.sha=_ghSha;r=await fetch(GH_URL,{method:'PUT',headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)})}}catch(e){}
-		}
+		// SHA 冲突 → 拉取云端数据合并后再推送（不覆盖对方数据）
+			if((r.status===409||r.status===422)&&_ghSha){
+				try{
+					const rf=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json'}});
+					if(rf.ok){
+						const jf=await rf.json();
+						const remoteData=JSON.parse(b64d(jf.content));
+						// 合并本地与云端数据，云端优先
+						const merged=mergeData(d,remoteData);
+						D=merged;
+						localStorage.setItem(SK,JSON.stringify(D));
+						_ghSha=jf.sha;
+						const newBody={message:'update data (merged)',content:b64e(JSON.stringify(merged))};
+						newBody.sha=_ghSha;
+						r=await fetch(GH_URL,{method:'PUT',headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(newBody)});
+					}
+				}catch(e){}
+			}
 		if(r.ok){const j=await r.json();_ghSha=j.content.sha;syncToast('✅ 已同步到云端',true)}
 		else if(r.status===409||r.status===422){syncToast('⚠️ 云端数据已变更，请刷新页面后重试',false)}
 		else{syncToast('❌ 同步失败('+r.status+')',false)}
 	}catch(e){syncToast('❌ 无法连接云端，仅保存在本地',false)}
 }
+	// 从云端拉取并合并数据（公有函数，nav 和定时器共用）
+	// showToast=true 时弹出同步提示，定时器调用时传 false 静默处理
+	async function syncFromCloud(showToast){
+		if(!hasToken())return false;
+		try{
+			const tk=getToken();
+			const r=await fetch(GH_URL,{headers:{'Authorization':'Bearer '+tk,'Accept':'application/vnd.github+json'}});
+			if(!r.ok)return false;
+			const j=await r.json();
+			// SHA 没变说明云端无更新
+			if(j.sha===_ghSha)return false;
+			const remote=JSON.parse(b64d(j.content));
+			_ghSha=j.sha;
+			// 合并云端数据到本地
+			const merged=mergeData(D,remote);
+			if(JSON.stringify(merged)!==JSON.stringify(D)){
+				D=merged;
+				localStorage.setItem(SK,JSON.stringify(D));
+				if(showToast)syncToast('🔄 已同步最新数据',true);
+				return true;
+			}
+		}catch(e){/* 静默失败 */}
+		return false;
+	}
+	// 定时自动同步：每 30 秒静默检查云端是否有更新
+	let _autoSyncTimer=null;
+	function startAutoSync(){
+		stopAutoSync();
+		if(!hasToken())return;
+		_autoSyncTimer=setInterval(async()=>{
+			const changed=await syncFromCloud(false);
+			if(changed){
+				// 刷新当前页面视图
+				const ap=document.querySelector('.pg.act');
+				if(ap){const id=ap.id;if(id==='pg-dash')rd();else if(id==='pg-ex')re();else if(id==='pg-cy')rc();else if(id==='pg-hist')rh();}
+			}
+		},30000);
+	}
+	function stopAutoSync(){
+		if(_autoSyncTimer){clearInterval(_autoSyncTimer);_autoSyncTimer=null;}
+	}
 	const fmt=d=>{const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return y+'-'+m+'-'+day};
 const now=()=>fmt(new Date());
 const im={running:'🏃',walking:'🚶',yoga:'🧘',swimming:'🏊',cycling:'🚴',gym:'🏋力量训练',dancing:'💃',pilates:'🤸',hiking:'🥾',aerobic:'🏋',jump_rope:'🪢',rowing:'🚣',badminton:'🏸',custom:'📝'};
@@ -681,13 +767,14 @@ const iv={'light':'轻松','moderate':'适中','intense':'高强度'};
 const fv={'light':'少量','medium':'中量','heavy':'大量'};
 const sv={'cramps':'腹痛','headache':'头痛','fatigue':'疲劳','bloating':'腹胀','mood':'情绪波动','backache':'腰酸'};
 
-function nav(p){
-document.querySelectorAll('.ni').forEach(b=>b.classList.remove('act'));
-document.querySelector('.ni[data-page="'+p+'"]').classList.add('act');
-document.querySelectorAll('.pg').forEach(pg=>pg.classList.remove('act'));
-document.getElementById('pg-'+p).classList.add('act');
-if(p==='dash')rd();if(p==='ex')re();if(p==='cy')rc();if(p==='hist')rh();
-}
+	async function nav(p){
+	document.querySelectorAll('.ni').forEach(b=>b.classList.remove('act'));
+	document.querySelector('.ni[data-page="'+p+'"]').classList.add('act');
+	document.querySelectorAll('.pg').forEach(pg=>pg.classList.remove('act'));
+	document.getElementById('pg-'+p).classList.add('act');
+	await syncFromCloud(true);
+	if(p==='dash')rd();if(p==='ex')re();if(p==='cy')rc();if(p==='hist')rh();
+	}
 document.querySelectorAll('.ni').forEach(b=>b.addEventListener('click',()=>nav(b.dataset.page)));
 
 function rd(){
@@ -718,10 +805,10 @@ let eid=null;
 		const endDay=new Date(now2);endDay.setDate(endDay.getDate()-(endDay.getDay()+1)%7+6);
 		const startDay=new Date(endDay);startDay.setDate(startDay.getDate()-weeks*7+1);
 		const body=document.getElementById('hmBody'),total=document.getElementById('hmTotal');
-		// 自适应单元格：根据卡片宽度动态计算
-		const wrap=body.closest('.card')||body.parentElement;
-		const cw=wrap?wrap.clientWidth-44:300;
-		const cellSize=Math.max(7,Math.min(15,Math.floor((cw-28)/(weeks+1))));
+		// 自适应单元格：标签22px + 25列*cellSize + 24个间距*2px ≤ 容器宽
+			const wrap=body.closest('.card')||body.parentElement;
+			const cw=wrap?wrap.clientWidth-44:300;
+			const cellSize=Math.max(4,Math.min(13,Math.floor((cw-22-24*2)/25)));
 		const todayStr=now();const dayData={};let totalMin=0;
 		D.ex.forEach(e=>{const m=e.duration||0;dayData[e.date]=(dayData[e.date]||0)+m});
 		const dlabels=['','一','','三','','五',''];
@@ -749,9 +836,9 @@ if(!mins&&ds===todayStr)bg='var(--gls2)';
 }
 r+='</tr>';rows+=r;
 }
-	body.innerHTML=monthRow+rows;total.textContent='总计 '+totalMin+' 分钟';
-	}
-	let _dayPopupTimer=0;
+		body.innerHTML=monthRow+rows;total.textContent='总计 '+totalMin+' 分钟';
+		}
+		let _dayPopupTimer=0;
 	function showDayDetail(evt,ds){
 		const pop=document.getElementById('dayPopup');if(!pop)return;
 		const acts=D.ex.filter(e=>e.date===ds);
@@ -782,10 +869,36 @@ function re(){
 		document.querySelector('#igrp .ibtn[data-v="moderate"]').classList.add('sel');
 		eid=null;document.getElementById('btnEx').textContent='记录运动';rte();drawWeekChart();
 	}
-function drawWeekChart(){
-	const days=['日','一','二','三','四','五','六'],wchart=document.getElementById('wchart');
-	if(!wchart)return;wchart.innerHTML='';
-	for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const ds=fmt(d),de=D.ex.filter(e=>e.date===ds),m=de.reduce((s,e)=>s+e.duration,0),h=Math.max(3,Math.min(120,m*1.8));wchart.innerHTML+='<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px"><span style="font-size:11px;color:var(--t2)">'+m+'</span><div style="width:100%;max-width:40px;height:'+h+'px;background:'+(i===0?'var(--ex)':'rgba(52,199,89,0.3)')+';border-radius:7px 7px 3px 3px"></div><span style="font-size:10px;color:var(--t3)">'+days[d.getDay()]+'</span></div>'}}
+	function drawWeekChart(){
+		const days=['日','一','二','三','四','五','六'],wchart=document.getElementById('wchart');
+		if(!wchart)return;wchart.innerHTML='';
+		// 第一遍：收集每天数据，parseInt 避免字符串拼接
+		const vals=[];
+		for(let i=6;i>=0;i--){
+			const d=new Date();d.setDate(d.getDate()-i);
+			const ds=fmt(d),de=D.ex.filter(e=>e.date===ds),
+				m=de.reduce((s,e)=>s+(parseInt(e.duration)||0),0);
+			vals.push({m,d});
+		}
+		const maxM=Math.max(...vals.map(v=>v.m),1);
+		const TRACK=115; // 轨道固定高度（像素）
+		// 第二遍：数字 bottom = 柱子高度，永远贴在柱子顶端
+		let html='';
+		vals.forEach((v,i)=>{
+			const barH=v.m>0?Math.max(2,Math.round((v.m/maxM)*TRACK)):0;
+			const bg=i===6?'var(--ex)':'rgba(52,199,89,0.3)';
+			html+='<div style="flex:1;display:flex;flex-direction:column;align-items:center">'
+				+'<div style="position:relative;width:100%;height:'+TRACK+'px">'
+					// 数字：bottom 等于柱子高度，紧贴柱子顶部
+					+(v.m>0?'<div style="position:absolute;bottom:'+barH+'px;left:0;right:0;text-align:center;font-size:11px;color:var(--t2);line-height:15px;padding-bottom:2px">'+v.m+'</div>':'')
+					// 柱子：钉在轨道底部
+					+'<div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:60%;max-width:44px;min-width:14px;height:'+barH+'px;background:'+bg+';border-radius:6px 6px 3px 3px;transition:height 0.35s var(--e1)"></div>'
+				+'</div>'
+				+'<div style="height:14px;margin-top:4px;font-size:10px;color:var(--t3);line-height:14px">'+days[v.d.getDay()]+'</div>'
+				+'</div>';
+		});
+		wchart.innerHTML=html;
+	}
 function rte(){
 const t=now(),list=D.ex.filter(e=>e.date===t).sort((a,b)=>b.id-a.id),el=document.getElementById('todayEx');
 if(list.length===0){el.innerHTML='<div class="emp"><div class="eic">💪</div><p>今天还没有运动</p></div>';return}
@@ -806,10 +919,10 @@ function dele(id){if(confirm('删除这条记录？')){D.ex=D.ex.filter(e=>e.id!
 document.querySelectorAll('#igrp .ibtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#igrp .ibtn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')}));
 document.getElementById('exType').addEventListener('change',()=>{const v=document.getElementById('exType').value;document.getElementById('exCustom').style.display=v==='custom'?'':'none'});
 
-let cy,cm,pid=null,ssym=[];
+let cy,cm,pid=null,ssym=[],cView='month';
 function rc(){
-document.getElementById('cddisp').textContent='📅 '+now();
-const nd=new Date();cy=nd.getFullYear();cm=nd.getMonth();
+	document.getElementById('cddisp').textContent='📅 '+now();
+	const nd=new Date();cy=nd.getFullYear();cm=nd.getMonth();cView='month';
 rcal();document.getElementById('pStart').value=now();document.getElementById('pEnd').value='';
 setSelVal('pFlow','medium');document.getElementById('pNotes').value='';ssym=[];
 document.querySelectorAll('#stags .stag').forEach(t=>t.classList.remove('sel'));
@@ -817,24 +930,82 @@ pid=null;document.getElementById('btnPeriod').style.display='';
 document.getElementById('btnUpdPeriod').style.display='none';
 document.getElementById('btnCancelPeriod').style.display='none';rcs();
 }
-function rcal(){
-document.getElementById('cTitle').textContent=cy+'年 '+(cm+1)+'月';
-const g=document.getElementById('cGrid'),dhs=['日','一','二','三','四','五','六'];
-let h=dhs.map(d=>'<div class="cdh">'+d+'</div>').join('');
-const fd=new Date(cy,cm,1).getDay(),dim2=new Date(cy,cm+1,0).getDate(),tn=now();
-const pds=new Set(),pss=new Set(),pes=new Set();
-D.pd.forEach(p=>{const s=new Date(p.startDate),e=new Date(p.endDate||p.startDate);for(let d=new Date(s);d<=e;d.setDate(d.getDate()+1)){const ds=fmt(d);pds.add(ds);if(fmt(d)===p.startDate)pss.add(ds);if(fmt(d)===(p.endDate||p.startDate))pes.add(ds)}});
-const prs=new Set(),ovs=new Set();
-if(D.pd.length>=2){const ps=D.pd.sort((a,b)=>a.startDate.localeCompare(b.startDate));let tc2=0;for(let i=1;i<ps.length;i++)tc2+=Math.round((new Date(ps[i].startDate)-new Date(ps[i-1].startDate))/86400000);const ac=Math.round(tc2/(ps.length-1))||28;const ls=new Date(ps[ps.length-1].startDate),ps2=new Date(ls);ps2.setDate(ps2.getDate()+ac);const pe=new Date(ps2);pe.setDate(pe.getDate()+4);for(let d=new Date(ps2);d<=pe;d.setDate(d.getDate()+1))prs.add(fmt(d));const ov=new Date(ps2);ov.setDate(ov.getDate()-14);for(let i=-2;i<=2;i++){const od=new Date(ov);od.setDate(od.getDate()+i);ovs.add(fmt(od))}}
-const pd2=new Date(cy,cm,0).getDate();
-for(let i=fd-1;i>=0;i--){h+='<div class="cd om">'+(pd2-i)+'</div>'}
-for(let day=1;day<=dim2;day++){const ds=cy+'-'+String(cm+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');let cls='cd';if(ds===tn)cls+=' today';if(pds.has(ds)){cls+=' prd';if(pss.has(ds)&&pes.has(ds))cls+=' prd-1';else if(pss.has(ds))cls+=' prd-s';else if(pes.has(ds))cls+=' prd-e'}if(prs.has(ds))cls+=' pred';if(ovs.has(ds)&&!pds.has(ds)&&!prs.has(ds))cls+=' ovu';h+='<div class="'+cls+'" data-date="'+ds+'" onclick="cdClick(\''+ds+'\')">'+day+'</div>'}
-const rem=42-(fd+dim2);for(let i=1;i<=rem;i++){h+='<div class="cd om">'+i+'</div>'}
-g.innerHTML=h;
-}
+	// 计算经期/预测/排卵标记（年月视图共用）
+	function calcCycleMarks(){
+		const pds=new Set(),pss=new Set(),pes=new Set();
+		D.pd.forEach(p=>{const s=new Date(p.startDate),e=new Date(p.endDate||p.startDate);for(let d=new Date(s);d<=e;d.setDate(d.getDate()+1)){const ds=fmt(d);pds.add(ds);if(fmt(d)===p.startDate)pss.add(ds);if(fmt(d)===(p.endDate||p.startDate))pes.add(ds)}});
+		const prs=new Set(),ovs=new Set();
+		if(D.pd.length>=2){const ps=D.pd.sort((a,b)=>a.startDate.localeCompare(b.startDate));let tc2=0;for(let i=1;i<ps.length;i++)tc2+=Math.round((new Date(ps[i].startDate)-new Date(ps[i-1].startDate))/86400000);const ac=Math.round(tc2/(ps.length-1))||28;const ls=new Date(ps[ps.length-1].startDate),ps2=new Date(ls);ps2.setDate(ps2.getDate()+ac);const pe=new Date(ps2);pe.setDate(pe.getDate()+4);for(let d=new Date(ps2);d<=pe;d.setDate(d.getDate()+1))prs.add(fmt(d));const ov=new Date(ps2);ov.setDate(ov.getDate()-14);for(let i=-2;i<=2;i++){const od=new Date(ov);od.setDate(od.getDate()+i);ovs.add(fmt(od))}}
+		return {pds,pss,pes,prs,ovs};
+	}
+	// 根据 cView 调度
+	function rcal(){if(cView==='year')rcalYear();else rcalMonth();}
+	// 月视图（原日历）
+	function rcalMonth(){
+			document.getElementById('cTitle').textContent=cy+'年 '+(cm+1)+'月';
+			const g=document.getElementById('cGrid');g.style.gridTemplateColumns=''; // 恢复 CSS 默认
+			const dhs=['日','一','二','三','四','五','六'];
+		let h=dhs.map(d=>'<div class="cdh">'+d+'</div>').join('');
+		const fd=new Date(cy,cm,1).getDay(),dim2=new Date(cy,cm+1,0).getDate(),tn=now();
+		const {pds,pss,pes,prs,ovs}=calcCycleMarks();
+		const pd2=new Date(cy,cm,0).getDate();
+		for(let i=fd-1;i>=0;i--){h+='<div class="cd om">'+(pd2-i)+'</div>'}
+		for(let day=1;day<=dim2;day++){const ds=cy+'-'+String(cm+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');let cls='cd';if(ds===tn)cls+=' today';if(pds.has(ds)){cls+=' prd';if(pss.has(ds)&&pes.has(ds))cls+=' prd-1';else if(pss.has(ds))cls+=' prd-s';else if(pes.has(ds))cls+=' prd-e'}if(prs.has(ds))cls+=' pred';if(ovs.has(ds)&&!pds.has(ds)&&!prs.has(ds))cls+=' ovu';h+='<div class="'+cls+'" data-date="'+ds+'" onclick="cdClick(\''+ds+'\')">'+day+'</div>'}
+		const rem=42-(fd+dim2);for(let i=1;i<=rem;i++){h+='<div class="cd om">'+i+'</div>'}
+		g.innerHTML=h;
+	}
+	// 年视图：12 个月缩略图（列数动态计算，完美填充容器）
+		function rcalYear(){
+			document.getElementById('cTitle').textContent=cy+'年';
+			const g=document.getElementById('cGrid');g.style.gridTemplateColumns='none';
+			const mnames=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+			const dhs=['日','一','二','三','四','五','六'],tn=now();
+			const {pds,prs}=calcCycleMarks();
+			// 根据容器宽度动态算列数（目标每卡 100~160px）
+			const cw=g.clientWidth-36; // 减去卡片 padding
+			const cols=Math.max(2,Math.min(6,Math.round(cw/120)));
+			const cardW=Math.floor((cw-(cols-1)*8)/cols); // 每卡宽度
+			const fs=cardW>130?'9px':cardW>100?'8px':'7px'; // 字号随宽度缩放
+			const fsm=cardW>130?'8px':cardW>100?'7px':'6px'; // 月份头字号
+			let h='<div class="ym-grid" style="grid-template-columns:repeat('+cols+',1fr)">';
+			for(let m=0;m<12;m++){
+				h+='<div class="ym-card" onclick="switchToMonth('+m+')"><div class="ym-name" style="font-size:'+fs+'">'+mnames[m]+'</div><div class="ym-mini" style="font-size:'+fsm+'">';
+				for(let d=0;d<7;d++)h+='<div class="ym-mh" style="font-size:'+fsm+'">'+dhs[d]+'</div>';
+				const fd=new Date(cy,m,1).getDay(),dim2=new Date(cy,m+1,0).getDate(),pd2=new Date(cy,m,0).getDate();
+				for(let i=fd-1;i>=0;i--)h+='<div class="ym-md om">'+(pd2-i)+'</div>';
+				for(let day=1;day<=dim2;day++){
+					const ds=cy+'-'+String(m+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');
+					let cls='ym-md';
+					if(ds===tn)cls+=' today';
+					if(pds.has(ds))cls+=' prd';
+					else if(prs.has(ds))cls+=' pred';
+					h+='<div class="'+cls+'">'+day+'</div>';
+				}
+				const rem2=42-(fd+dim2);for(let i=1;i<=rem2;i++)h+='<div class="ym-md om">'+i+'</div>';
+				h+='</div></div>';
+			}
+			h+='</div>';g.innerHTML=h;
+			// 记录当前视图参数用于 resize 重绘
+			g._yearViewArgs={cy};
+		}
+		// 从年视图点某月→切到月视图
+		function switchToMonth(m){cm=m;cView='month';document.querySelectorAll('.cv-btn').forEach(b=>b.classList.toggle('act',b.dataset.view==='month'));rcal()}
+	// 窗口缩放时重绘当前视图
+	window.addEventListener('resize',()=>{
+		const pg=document.querySelector('.pg.act');
+		if(!pg)return;
+		if(pg.id==='pg-dash')renderHeatmap();
+		if(pg.id==='pg-cy'&&cView==='year')rcalYear();
+	});
 function cdClick(ds){document.getElementById('pStart').value=ds;document.getElementById('pEnd').value='';document.getElementById('pg-cy').scrollIntoView({behavior:'smooth'})}
-document.getElementById('cPrev').addEventListener('click',()=>{cm--;if(cm<0){cy--;cm=11}rcal()});
-document.getElementById('cNext').addEventListener('click',()=>{cm++;if(cm>11){cy++;cm=0}rcal()});
+document.getElementById('cPrev').addEventListener('click',()=>{if(cView==='year'){cy--}else{cm--;if(cm<0){cy--;cm=11}}rcal()});
+document.getElementById('cNext').addEventListener('click',()=>{if(cView==='year'){cy++}else{cm++;if(cm>11){cy++;cm=0}}rcal()});
+// 年/月切换器
+document.querySelectorAll('.cv-btn').forEach(b=>b.addEventListener('click',()=>{
+	cView=b.dataset.view;
+	document.querySelectorAll('.cv-btn').forEach(x=>x.classList.toggle('act',x.dataset.view===cView));
+	rcal();
+}));
 document.querySelectorAll('#stags .stag').forEach(t=>t.addEventListener('click',()=>{t.classList.toggle('sel');const s=t.dataset.s;if(t.classList.contains('sel')){if(!ssym.includes(s))ssym.push(s)}else ssym=ssym.filter(x=>x!==s)}));
 document.getElementById('btnPeriod').addEventListener('click',()=>{
 const sd2=document.getElementById('pStart').value,ed2=document.getElementById('pEnd').value||sd2;
@@ -952,10 +1123,11 @@ b.classList.add('active');
 });
 })();
 
-async function initApp(){
-D=await ld();
-document.getElementById('exDate').value=now();document.getElementById('pStart').value=now();rd();
-	}
+	async function initApp(){
+	D=await ld();
+	document.getElementById('exDate').value=now();document.getElementById('pStart').value=now();rd();
+	startAutoSync();
+		}
 </script>
 </body>
 </html>
