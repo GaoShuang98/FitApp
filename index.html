@@ -79,8 +79,8 @@ transition:all var(--e1);border:none;background:none;width:100%;text-align:left;
 font-family:var(--f);letter-spacing:-0.1px;position:relative
 }
 .ni:hover{background:var(--gls1);color:var(--t1)}
-.ni.act{background:var(--gls2);color:var(--t1);font-weight:540}
-.ni.act::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:0 3px 3px 0;background:var(--p3)}
+.ni.act{background:var(--gls2);color:var(--t1);font-weight:540;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06)}
+.ni.act::before{content:'';position:absolute;left:0;top:6px;bottom:6px;width:4px;border-radius:0 4px 4px 0;background:linear-gradient(180deg,var(--p3),var(--p1));box-shadow:0 0 10px var(--exg)}
 .ni .ic{font-size:17px;width:20px;text-align:center;flex-shrink:0}
 .badge{
 margin-left:auto;font-size:10px;font-weight:560;padding:2px 7px;border-radius:20px;
@@ -97,9 +97,9 @@ box-shadow:0 2px 8px rgba(255,159,10,0.25)
 .main{flex:1;display:flex;flex-direction:column;gap:14px;min-width:0}
 
 /* ===== Page Transitions ===== */
-.pg{display:none;flex-direction:column;gap:14px;animation:pgIn 0.45s var(--e2)}
+.pg{display:none;flex-direction:column;gap:14px}
 .pg.act{display:flex}
-@keyframes pgIn{from{opacity:0;transform:translateY(12px);filter:blur(4px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+@keyframes pgIn{from{opacity:0.6;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* ===== Glass Card - Premium ===== */
 .card{
@@ -225,9 +225,12 @@ position:relative;font-weight:440;color:var(--t1)
 .cd.today::after{content:'';position:absolute;bottom:3px;width:4px;height:4px;border-radius:50%;background:var(--ex);box-shadow:0 0 6px var(--ex)}
 .cd.prd{background:var(--cys);color:var(--cy);font-weight:540;box-shadow:inset 0 0 10px var(--cys)}
 .cd.prd-s{border-radius:50% 0 0 50%}.cd.prd-e{border-radius:0 50% 50% 0}.cd.prd-1{border-radius:50%}
-.cd.pred{background:rgba(255,55,95,0.04);border:1.5px dashed rgba(255,55,95,0.25);border-radius:50%}
+.cd.pred{background:rgba(255,55,95,0.08);border:1.5px dashed rgba(255,55,95,0.45);border-radius:50%}
 .cd.om{color:var(--t3)}
 .cd.ovu{box-shadow:inset 0 0 0 2px var(--ov),0 0 10px rgba(100,149,237,0.2);border-radius:50%}
+/* 新记录闪烁 */
+@keyframes flashIn{0%{background:rgba(48,209,88,0.25);box-shadow:0 0 16px var(--exg)}100%{background:transparent;box-shadow:none}}
+.flash-in{animation:flashIn 1s var(--e2) forwards}
 .leg{display:flex;gap:14px;margin-top:12px;flex-wrap:wrap}
 .li2{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--t2)}
 .ld{width:8px;height:8px;border-radius:50%}
@@ -251,7 +254,7 @@ position:relative;font-weight:440;color:var(--t1)
 .ym-mh{color:var(--t3);font-weight:460;font-size:7px}
 .ym-md{display:flex;align-items:center;justify-content:center;border-radius:50%;position:relative;padding:1px 0}
 .ym-md.om{color:var(--t3);opacity:0.3}
-.ym-md.today{font-weight:640;color:var(--ex)}
+.ym-md.today{font-weight:700;color:var(--ex);background:var(--exs);border-radius:50%}
 .ym-md.prd{color:var(--cy);font-weight:560}
 .ym-md.prd::after{content:'';position:absolute;bottom:0;width:2px;height:2px;border-radius:50%;background:var(--cy)}
 .ym-md.pred{color:var(--cy);opacity:0.45;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:1px;text-decoration-thickness:1px}
@@ -307,7 +310,7 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 	}
 	@media(max-width:460px){
 	.sgrid{grid-template-columns:1fr 1fr}.sv{font-size:28px}.top h2{font-size:18px}.cg{gap:2px}.cd{font-size:11px}
-	.heatmap-table{border-spacing:2px}
+	.heatmap-table{border-spacing:3px;margin:0 auto}
 		.hm-month{font-size:8px}.heatmap-header h3{font-size:13px}
 		}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}
@@ -370,11 +373,12 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 	.heatmap-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;min-width:max-content}
 	.heatmap-header h3{font-size:15px;font-weight:560;flex-shrink:0}
 	.heatmap-header .hm-total{font-size:12px;color:var(--t2);flex-shrink:0;margin-left:12px}
-	.heatmap-table{border-collapse:separate;border-spacing:2px}
+	.heatmap-table{border-collapse:separate;border-spacing:3px;margin:0 auto}
 	.heatmap-table td{padding:0;line-height:0}
 	.heatmap-cell{border-radius:2px;background:var(--gls1);transition:all var(--e1);cursor:default;position:relative}
+.heatmap-cell.cur-week{box-shadow:inset 0 0 0 1.5px rgba(255,255,255,0.2),0 0 4px rgba(255,255,255,0.06)}
 .heatmap-cell:hover{outline:1.5px solid var(--t2);z-index:2;transform:scale(1.5)}
-.heatmap-cell[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10px;font-family:var(--f);color:var(--t1);background:rgba(26,26,36,0.95);backdrop-filter:blur(20px);border:1px solid var(--gb);border-radius:6px;padding:4px 8px;pointer-events:none;z-index:10}
+.heatmap-cell[data-tip]:hover::after{display:none}
 .hm-label{font-size:9px;color:var(--t3);text-align:left;padding-right:6px;width:16px;line-height:13px;vertical-align:top}
 .hm-month{font-size:9px;color:var(--t3);text-align:left;padding-top:2px;white-space:nowrap;overflow:visible}
 .heatmap-legend{display:flex;align-items:center;gap:4px;margin-top:8px;font-size:10px;color:var(--t2)}
@@ -514,6 +518,7 @@ display:flex;align-items:center;gap:4px;font-size:12px;
 <div class="fg"><label>强度</label><div class="igrp" id="igrp"><button class="ibtn" data-v="light">轻松</button><button class="ibtn sel" data-v="moderate">适中</button><button class="ibtn" data-v="intense">高强度</button></div></div>
 <div class="fg"><label>备注</label><textarea class="ft" id="exNotes" placeholder="记录一下感受..."></textarea></div>
 <button class="btn btn-p" id="btnEx" style="width:100%">记录运动</button>
+<button class="btn btn-gh" id="btnCancelEx" style="width:100%;display:none;margin-top:3px">取消编辑</button>
 </div>
 </div>
 <div class="card"><h3 style="font-size:15px;font-weight:560;margin-bottom:12px">📊 本周运动</h3><div id="wchart" style="display:flex;gap:7px;height:148px;padding-bottom:4px"></div></div>
@@ -543,9 +548,9 @@ display:flex;align-items:center;gap:4px;font-size:12px;
 </div>
 </section>
 
-<section class="pg" id="pg-hist">
-<div class="top"><h2>历史记录</h2></div>
-<div class="card"><div class="hfilt"><button class="fchip act" data-filter="all">全部</button><button class="fchip" data-filter="exercise">🏃 运动</button><button class="fchip" data-filter="cycle">🌸 经期</button></div><div id="timeline"></div></div>
+	<section class="pg" id="pg-hist">
+	<div class="top"><h2>历史记录</h2></div>
+	<div class="card"><div class="hfilt"><button class="fchip act" data-filter="all">全部</button><button class="fchip" data-filter="exercise">🏃 运动</button><button class="fchip" data-filter="cycle">🌸 经期</button><span style="margin-left:auto;display:flex;align-items:center;gap:6px"><input type="date" class="fi" id="hDateFrom" style="width:auto;padding:5px 8px;font-size:11px" onchange="rh()"><span style="font-size:11px;color:var(--t2)">~</span><input type="date" class="fi" id="hDateTo" style="width:auto;padding:5px 8px;font-size:11px" onchange="rh()"></span></div><div id="timeline"></div></div>
 </section>
 
 </main>
@@ -586,15 +591,30 @@ function updateSyncBtn(){
 	const mb=document.getElementById('mbSync');
 	if(mb)mb.textContent=hasToken()?'☁️':'☁️';
 }
-let _syncToastTimer=0;
-function syncToast(msg,ok){
-	const el=document.getElementById('syncToast');if(!el)return;
-	el.textContent=msg;el.style.background=ok?'var(--exs)':'var(--cys)';
-	el.style.color=ok?'var(--ex)':'var(--cy)';
-	el.style.opacity='1';
-	clearTimeout(_syncToastTimer);
-	_syncToastTimer=setTimeout(()=>{el.style.opacity='0'},2500);
-}
+	let _syncToastTimer=0;
+	function syncToast(msg,ok){
+		const el=document.getElementById('syncToast');if(!el)return;
+		el.textContent=msg;el.style.background=ok?'var(--exs)':'var(--cys)';
+		el.style.color=ok?'var(--ex)':'var(--cy)';
+		el.style.opacity='1';
+		clearTimeout(_syncToastTimer);
+		_syncToastTimer=setTimeout(()=>{el.style.opacity='0'},2500);
+	}
+	// 撤销删除系统
+	let _undoData=null,_undoTimer=0;
+	function undoToast(msg,onUndo){
+		_undoData={onUndo};clearTimeout(_undoTimer);
+		const el=document.getElementById('syncToast');if(!el)return;
+		el.innerHTML='<span>'+msg+'</span> <button onclick="performUndo()" style="background:var(--gls2);border:1px solid var(--gb);color:var(--t1);padding:2px 10px;border-radius:12px;cursor:pointer;font-size:11px;font-family:var(--f);margin-left:8px;font-weight:520">撤销</button>';
+		el.style.background='var(--cys)';el.style.color='var(--cy)';el.style.opacity='1';
+		_undoTimer=setTimeout(()=>{el.style.opacity='0';_undoData=null},4000);
+	}
+	function performUndo(){
+		if(_undoData){_undoData.onUndo();_undoData=null}
+		clearTimeout(_undoTimer);
+		const el=document.getElementById('syncToast');
+		el.style.opacity='0';el.innerHTML='';
+	}
 function saveToken(){
 	const v=document.getElementById('tokenInput').value.trim();
 	if(!v.startsWith('ghp_')&&!v.startsWith('github_pat_')){
@@ -770,10 +790,14 @@ const sv={'cramps':'腹痛','headache':'头痛','fatigue':'疲劳','bloating':'�
 	async function nav(p){
 	document.querySelectorAll('.ni').forEach(b=>b.classList.remove('act'));
 	document.querySelector('.ni[data-page="'+p+'"]').classList.add('act');
-	document.querySelectorAll('.pg').forEach(pg=>pg.classList.remove('act'));
-	document.getElementById('pg-'+p).classList.add('act');
-	await syncFromCloud(true);
+	// 先渲染内容，再切换页面，避免空白闪烁
 	if(p==='dash')rd();if(p==='ex')re();if(p==='cy')rc();if(p==='hist')rh();
+	const cur=document.querySelector('.pg.act');if(cur)cur.classList.remove('act');
+	document.getElementById('pg-'+p).classList.add('act');
+	// 显示后补一次热力图渲染（隐藏时 clientWidth 为 0）
+	if(p==='dash')requestAnimationFrame(()=>renderHeatmap());
+	// 后台静默同步
+	syncFromCloud(true).then(changed=>{if(changed){if(p==='dash')rd();if(p==='ex')re();if(p==='cy')rc();if(p==='hist')rh()}});
 	}
 document.querySelectorAll('.ni').forEach(b=>b.addEventListener('click',()=>nav(b.dataset.page)));
 
@@ -788,10 +812,10 @@ if(lp){const sd2=new Date(lp.startDate),td2=new Date(),dd=Math.floor((td2-sd2)/(
 const cp=pds.find(p=>t>=p.startDate&&t<=(p.endDate||p.startDate));
 document.getElementById('badge').style.display=cp?'inline':'none';
 document.getElementById('dstats').innerHTML=
-'<div class="card sc"><div class="sv ex">'+tm+'</div><div class="sl">今日运动（分）</div><div class="ss">'+te.length+' 次</div></div>'+
-'<div class="card sc"><div class="sv ex">'+wm+'</div><div class="sl">本周运动（分）</div><div class="ss">'+wc+' 次</div></div>'+
-'<div class="card sc"><div class="sv cy">'+(pds.length||'0')+'</div><div class="sl">经期记录</div><div class="ss">'+ci+'</div></div>'+
-'<div class="card sc"><div class="sv wm">'+(lp?Math.round((new Date(lp.endDate||lp.startDate)-new Date(lp.startDate))/86400000)+1:'-')+'</div><div class="sl">最近经期天数</div></div>';
+	'<div class="card sc" onclick="nav(\'ex\')" style="cursor:pointer"><div class="sv ex">'+tm+'</div><div class="sl">今日运动（分）</div><div class="ss">'+te.length+' 次</div></div>'+
+	'<div class="card sc" onclick="nav(\'ex\')" style="cursor:pointer"><div class="sv ex">'+wm+'</div><div class="sl">本周运动（分）</div><div class="ss">'+wc+' 次</div></div>'+
+	'<div class="card sc" onclick="nav(\'cy\')" style="cursor:pointer"><div class="sv cy">'+(pds.length||'0')+'</div><div class="sl">经期记录</div><div class="ss">'+ci+'</div></div>'+
+	'<div class="card sc" onclick="nav(\'cy\')" style="cursor:pointer"><div class="sv wm">'+(lp?Math.round((new Date(lp.endDate||lp.startDate)-new Date(lp.startDate))/86400000)+1:'-')+'</div><div class="sl">最近经期天数</div></div>';
 renderHeatmap();
 const rc=[...D.ex.map(e=>({...e,it:'ex'})),...D.pd.map(p=>({...p,it:'pd'}))].sort((a,b)=>new Date(b.date||b.startDate)-new Date(a.date||a.startDate)).slice(0,6);
 const ra=document.getElementById('recent');
@@ -799,16 +823,16 @@ if(rc.length===0){ra.innerHTML='<div class="emp"><div class="eic">📝</div><p>�
 ra.innerHTML=rc.map(r=>{if(r.it==='pd')return '<div class="ti"><div class="td">'+r.startDate+(r.endDate!==r.startDate?' ~ '+r.endDate:'')+'</div><div class="tc"><h4>🌸 经期</h4><p>流量: '+fv[r.flow||'medium']+((r.symptoms||[]).length?' · '+r.symptoms.map(s=>sv[s]||s).join('、'):'')+'</p></div></div>';return '<div class="ti"><div class="td">'+r.date+'</div><div class="tc"><h4>'+im[r.type]+' '+(nm[r.type]||(r.customName||'自定义'))+' · '+r.duration+'分钟</h4><p>'+iv[r.intensity||'moderate']+(r.notes?' · '+r.notes:'')+'</p></div></div>'}).join('');
 }
 
-let eid=null;
+let eid=null,_flashId=null;
 	function renderHeatmap(){
 		const weeks=24,now2=new Date();now2.setHours(0,0,0,0);
 		const endDay=new Date(now2);endDay.setDate(endDay.getDate()-(endDay.getDay()+1)%7+6);
 		const startDay=new Date(endDay);startDay.setDate(startDay.getDate()-weeks*7+1);
 		const body=document.getElementById('hmBody'),total=document.getElementById('hmTotal');
-		// 自适应单元格：标签22px + 25列*cellSize + 24个间距*2px ≤ 容器宽
-			const wrap=body.closest('.card')||body.parentElement;
-			const cw=wrap?wrap.clientWidth-44:300;
-			const cellSize=Math.max(4,Math.min(13,Math.floor((cw-22-24*2)/25)));
+		// 自适应单元格：标签22px + 24列*cellSize + 24个间距*2px ≤ 容器宽
+				const wrap=body.closest('.card')||body.parentElement;
+				const cw=wrap?wrap.clientWidth-44:300;
+				const cellSize=Math.max(4,Math.min(20,Math.floor((cw-22-24*3)/24)));
 		const todayStr=now();const dayData={};let totalMin=0;
 		D.ex.forEach(e=>{const m=e.duration||0;dayData[e.date]=(dayData[e.date]||0)+m});
 		const dlabels=['','一','','三','','五',''];
@@ -829,32 +853,36 @@ r+=dow%2===1?'<td class="hm-label">'+dlabels[dow]+'</td>':'<td class="hm-label">
 for(let w=0;w<weeks;w++){
 const date=new Date(startDay);date.setDate(date.getDate()+w*7+dow);const ds=fmt(date);
 const mins=dayData[ds]||0;totalMin+=mins;
-let bg='var(--gls1)';let tip='';
-if(mins>0){if(mins<=15)bg='rgba(48,209,88,0.15)';else if(mins<=30)bg='rgba(48,209,88,0.3)';else if(mins<=60)bg='rgba(48,209,88,0.55)';else bg='var(--ex)';tip=ds+' : '+mins+'分钟'}
+let bg='var(--gls1)';
+	if(mins>0){if(mins<=15)bg='rgba(48,209,88,0.15)';else if(mins<=30)bg='rgba(48,209,88,0.3)';else if(mins<=60)bg='rgba(48,209,88,0.55)';else bg='var(--ex)'}
 if(!mins&&ds===todayStr)bg='var(--gls2)';
-			r+='<td><div class="heatmap-cell" style="width:'+cellSize+'px;height:'+cellSize+'px;background:'+bg+';'+(mins>0?'cursor:pointer':'')+'" data-date="'+ds+'" onclick="showDayDetail(event,\''+ds+'\')"'+(tip?' data-tip="'+tip+'"':'')+'></div></td>';
+			r+='<td><div class="heatmap-cell'+(w===weeks-1?' cur-week':'')+'" style="width:'+cellSize+'px;height:'+cellSize+'px;background:'+bg+';'+(mins>0?'cursor:pointer':'')+'" data-date="'+ds+'" onmouseenter="showDayDetail(event,\''+ds+'\')" onmouseleave="hideDayPopup()"></div></td>';
 }
 r+='</tr>';rows+=r;
 }
 		body.innerHTML=monthRow+rows;total.textContent='总计 '+totalMin+' 分钟';
 		}
 		let _dayPopupTimer=0;
-	function showDayDetail(evt,ds){
-		const pop=document.getElementById('dayPopup');if(!pop)return;
-		const acts=D.ex.filter(e=>e.date===ds);
-		if(acts.length===0){pop.style.display='none';return}
-		let h='<div style="font-weight:560;margin-bottom:6px">📅 '+ds+'</div>';
-		acts.forEach(e=>{
-			h+='<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:11px">';
-			h+='<span>'+im[e.type]+'</span><span>'+(nm[e.type]||e.customName||'自定义')+'</span>';
-			h+='<span style="color:var(--ex);margin-left:auto">'+e.duration+'分</span></div>';
-		});
-		pop.innerHTML=h;pop.style.display='';
-		pop.style.left=evt.clientX+'px';pop.style.top=(evt.clientY-12)+'px';
-		pop.style.opacity='1';
-		clearTimeout(_dayPopupTimer);
-		_dayPopupTimer=setTimeout(()=>{pop.style.opacity='0';setTimeout(()=>{pop.style.display='none'},200)},2000);
-	}
+		function showDayDetail(evt,ds){
+			const pop=document.getElementById('dayPopup');if(!pop)return;
+			clearTimeout(_dayPopupTimer);
+			const acts=D.ex.filter(e=>e.date===ds);
+			if(acts.length===0){pop.style.opacity='0';return}
+			let h='<div style="font-weight:560;margin-bottom:6px">📅 '+ds+'</div>';
+			acts.forEach(e=>{
+				h+='<div style="display:flex;align-items:center;gap:6px;padding:3px 0;font-size:11px">';
+				h+='<span>'+im[e.type]+'</span><span>'+(nm[e.type]||e.customName||'自定义')+'</span>';
+				h+='<span style="color:var(--ex);margin-left:auto">'+e.duration+'分</span></div>';
+			});
+			pop.innerHTML=h;pop.style.display='';
+			pop.style.left=evt.clientX+'px';pop.style.top=(evt.clientY-12)+'px';
+			pop.style.opacity='1';
+		}
+		function hideDayPopup(){
+			const pop=document.getElementById('dayPopup');if(!pop)return;
+			pop.style.opacity='0';
+			_dayPopupTimer=setTimeout(()=>{pop.style.display='none'},200);
+		}
 function setSelVal(selId,val){
 	const sel=document.getElementById(selId);if(!sel)return;
 	sel.value=val;
@@ -881,13 +909,14 @@ function re(){
 			vals.push({m,d});
 		}
 		const maxM=Math.max(...vals.map(v=>v.m),1);
-		const TRACK=115; // 轨道固定高度（像素）
-		// 第二遍：数字 bottom = 柱子高度，永远贴在柱子顶端
-		let html='';
-		vals.forEach((v,i)=>{
-			const barH=v.m>0?Math.max(2,Math.round((v.m/maxM)*TRACK)):0;
-			const bg=i===6?'var(--ex)':'rgba(52,199,89,0.3)';
-			html+='<div style="flex:1;display:flex;flex-direction:column;align-items:center">'
+			const TRACK=115; // 轨道固定高度（像素）
+			// 第二遍：数字 bottom = 柱子高度，永远贴在柱子顶端
+			let html='';
+			vals.forEach((v,i)=>{
+				const ds=fmt(v.d);
+				const barH=v.m>0?Math.max(2,Math.round((v.m/maxM)*TRACK)):0;
+				const bg=i===6?'var(--ex)':'rgba(52,199,89,0.3)';
+				html+='<div style="flex:1;display:flex;flex-direction:column;align-items:center'+(v.m>0?';cursor:pointer':'')+'" onclick="'+(v.m>0?'showDayDetail(event,\''+ds+'\')':'')+'" onmouseenter="'+(v.m>0?'showDayDetail(event,\''+ds+'\')':'')+'" onmouseleave="hideDayPopup()">'
 				+'<div style="position:relative;width:100%;height:'+TRACK+'px">'
 					// 数字：bottom 等于柱子高度，紧贴柱子顶部
 					+(v.m>0?'<div style="position:absolute;bottom:'+barH+'px;left:0;right:0;text-align:center;font-size:11px;color:var(--t2);line-height:15px;padding-bottom:2px">'+v.m+'</div>':'')
@@ -902,7 +931,8 @@ function re(){
 function rte(){
 const t=now(),list=D.ex.filter(e=>e.date===t).sort((a,b)=>b.id-a.id),el=document.getElementById('todayEx');
 if(list.length===0){el.innerHTML='<div class="emp"><div class="eic">💪</div><p>今天还没有运动</p></div>';return}
-el.innerHTML=list.map(e=>'<div class="exi"><div class="ei '+icm[e.type]+'">'+im[e.type]+'</div><div class="exif"><div class="en">'+(nm[e.type]||(e.customName||'自定义'))+'</div><div class="em">'+iv[e.intensity||'moderate']+(e.notes?' · '+e.notes:'')+'</div></div><div class="ed">'+e.duration+' 分钟</div><button class="btn btn-d" onclick="edite('+e.id+')">编辑</button><button class="btn btn-d" onclick="dele('+e.id+')">✕</button></div>').join('');
+el.innerHTML=list.map(e=>'<div class="exi'+(e.id===_flashId?' flash-in':'')+'"><div class="ei '+icm[e.type]+'">'+im[e.type]+'</div><div class="exif"><div class="en">'+(nm[e.type]||(e.customName||'自定义'))+'</div><div class="em">'+iv[e.intensity||'moderate']+(e.notes?' · '+e.notes:'')+'</div></div><div class="ed">'+e.duration+' 分钟</div><button class="btn btn-d" onclick="edite('+e.id+')">编辑</button><button class="btn btn-d" onclick="dele('+e.id+')">✕</button></div>').join('');
+	if(_flashId){setTimeout(()=>{_flashId=null},1200)}
 }
 document.getElementById('btnEx').addEventListener('click',()=>{
 const date=document.getElementById('exDate').value||now();let type=document.getElementById('exType').value;let customName='';
@@ -910,12 +940,14 @@ if(type==='custom'){customName=document.getElementById('exCustom').value.trim();
 const dur=parseInt(document.getElementById('exDur').value)||0;const inten=document.querySelector('#igrp .ibtn.sel')?.dataset.v||'moderate';
 const notes=document.getElementById('exNotes').value.trim();
 if(dur<=0){alert('请输入运动时长');return}
-if(eid!==null){const i=D.ex.findIndex(e=>e.id===eid);if(i!==-1){if(type==='custom')D.ex[i]={...D.ex[i],date,type:'custom',duration:dur,intensity:inten,notes,customName:customName};else D.ex[i]={...D.ex[i],date,type,duration:dur,intensity:inten,notes}};eid=null;document.getElementById('btnEx').textContent='记录运动'}
-else{if(type==='custom')D.ex.push({id:Date.now(),date,type:'custom',duration:dur,intensity:inten,notes,customName:customName});else D.ex.push({id:Date.now(),date,type,duration:dur,intensity:inten,notes})}
+if(eid!==null){const i=D.ex.findIndex(e=>e.id===eid);if(i!==-1){if(type==='custom')D.ex[i]={...D.ex[i],date,type:'custom',duration:dur,intensity:inten,notes,customName:customName};else D.ex[i]={...D.ex[i],date,type,duration:dur,intensity:inten,notes}};eid=null;document.getElementById('btnEx').textContent='记录运动';document.getElementById('btnCancelEx').style.display='none'}
+	else{const newId=Date.now();if(type==='custom')D.ex.push({id:newId,date,type:'custom',duration:dur,intensity:inten,notes,customName:customName});else D.ex.push({id:newId,date,type,duration:dur,intensity:inten,notes});_flashId=newId}
 sd(D);re();rd();
 });
-function edite(id){const e=D.ex.find(x=>x.id===id);if(!e)return;document.getElementById('exDate').value=e.date;setSelVal('exType',e.type==='custom'?'custom':e.type);if(e.customName){document.getElementById('exCustom').value=e.customName;document.getElementById('exCustom').style.display=''}document.getElementById('exDur').value=e.duration;document.getElementById('exNotes').value=e.notes||'';document.querySelectorAll('#igrp .ibtn').forEach(b=>b.classList.remove('sel'));const b=document.querySelector('#igrp .ibtn[data-v="'+e.intensity+'"]');if(b)b.classList.add('sel');eid=id;document.getElementById('btnEx').textContent='更新运动';document.getElementById('pg-ex').scrollIntoView({behavior:'smooth'})}
-function dele(id){if(confirm('删除这条记录？')){D.ex=D.ex.filter(e=>e.id!==id);sd(D);re();rd()}}
+function edite(id){const e=D.ex.find(x=>x.id===id);if(!e)return;document.getElementById('exDate').value=e.date;setSelVal('exType',e.type==='custom'?'custom':e.type);if(e.customName){document.getElementById('exCustom').value=e.customName;document.getElementById('exCustom').style.display=''}document.getElementById('exDur').value=e.duration;document.getElementById('exNotes').value=e.notes||'';document.querySelectorAll('#igrp .ibtn').forEach(b=>b.classList.remove('sel'));const b=document.querySelector('#igrp .ibtn[data-v="'+e.intensity+'"]');if(b)b.classList.add('sel');eid=id;document.getElementById('btnEx').textContent='更新运动';document.getElementById('btnCancelEx').style.display='';document.getElementById('pg-ex').scrollIntoView({behavior:'smooth'})}
+function cancelExEdit(){eid=null;document.getElementById('btnEx').textContent='记录运动';document.getElementById('btnCancelEx').style.display='none';re()}
+document.getElementById('btnCancelEx').addEventListener('click',cancelExEdit);
+function dele(id){const e=D.ex.find(x=>x.id===id);if(!e)return;D.ex=D.ex.filter(x=>x.id!==id);sd(D);re();rd();undoToast('已删除运动记录',()=>{D.ex.push(e);sd(D);re();rd()})}
 document.querySelectorAll('#igrp .ibtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#igrp .ibtn').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')}));
 document.getElementById('exType').addEventListener('change',()=>{const v=document.getElementById('exType').value;document.getElementById('exCustom').style.display=v==='custom'?'':'none'});
 
@@ -956,17 +988,17 @@ document.getElementById('btnCancelPeriod').style.display='none';rcs();
 	}
 	// 年视图：12 个月缩略图（列数动态计算，完美填充容器）
 		function rcalYear(){
-			document.getElementById('cTitle').textContent=cy+'年';
-			const g=document.getElementById('cGrid');g.style.gridTemplateColumns='none';
-			const mnames=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+				document.getElementById('cTitle').textContent=cy+'年';
+				const g=document.getElementById('cGrid');g.style.gridTemplateColumns='none';
+				const mnames=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
 			const dhs=['日','一','二','三','四','五','六'],tn=now();
 			const {pds,prs}=calcCycleMarks();
-			// 根据容器宽度动态算列数（目标每卡 100~160px）
-			const cw=g.clientWidth-36; // 减去卡片 padding
-			const cols=Math.max(2,Math.min(6,Math.round(cw/120)));
-			const cardW=Math.floor((cw-(cols-1)*8)/cols); // 每卡宽度
-			const fs=cardW>130?'9px':cardW>100?'8px':'7px'; // 字号随宽度缩放
-			const fsm=cardW>130?'8px':cardW>100?'7px':'6px'; // 月份头字号
+			// 根据容器宽度动态算列数（目标每卡 ~160px）
+				const cw=g.clientWidth-36;
+				const cols=Math.max(1,Math.min(5,Math.round(cw/160)));
+				const cardW=Math.floor((cw-(cols-1)*8)/cols);
+				const fs=cardW>160?'11px':cardW>130?'10px':'9px';
+				const fsm=cardW>160?'10px':cardW>130?'9px':'8px';
 			let h='<div class="ym-grid" style="grid-template-columns:repeat('+cols+',1fr)">';
 			for(let m=0;m<12;m++){
 				h+='<div class="ym-card" onclick="switchToMonth('+m+')"><div class="ym-name" style="font-size:'+fs+'">'+mnames[m]+'</div><div class="ym-mini" style="font-size:'+fsm+'">';
@@ -1011,7 +1043,7 @@ document.getElementById('btnPeriod').addEventListener('click',()=>{
 const sd2=document.getElementById('pStart').value,ed2=document.getElementById('pEnd').value||sd2;
 const flow=document.getElementById('pFlow').value,notes=document.getElementById('pNotes').value.trim();
 if(!sd2){alert('请选择开始日期');return}
-D.pd.push({id:Date.now(),startDate:sd2,endDate:ed2,flow,symptoms:[...ssym],notes});sd(D);rc();rd();
+const newPid=Date.now();D.pd.push({id:newPid,startDate:sd2,endDate:ed2,flow,symptoms:[...ssym],notes});_flashId=newPid;sd(D);rc();rd();
 });
 document.getElementById('btnUpdPeriod').addEventListener('click',()=>{
 if(pid===null)return;const i=D.pd.findIndex(p=>p.id===pid);if(i===-1)return;
@@ -1040,24 +1072,37 @@ h+='<div><span style="color:var(--t2)">平均经期</span><br><strong>'+ap+' 天
 h+='<div><span style="color:var(--t2)">记录次数</span><br><strong>'+ps.length+' 次</strong></div>';
 h+='<div><span style="color:var(--t2)">预测下次</span><br><strong>'+fmt(np)+'</strong></div></div>';
 h+='<div style="margin-top:10px;max-height:180px;overflow-y:auto">';
-[...ps].reverse().slice(0,5).forEach(p=>{const days3=Math.round((new Date(p.endDate||p.startDate)-new Date(p.startDate))/86400000)+1;h+='<div class="pli"><div class="pdb"></div><div style="flex:1"><div style="font-size:12px;font-weight:500">'+p.startDate+(p.endDate!==p.startDate?' ~ '+p.endDate:'')+' ('+days3+'天)</div><div style="font-size:10px;color:var(--t2)">'+fv[p.flow||'medium']+((p.symptoms||[]).length?' · '+p.symptoms.map(s=>sv[s]||s).join('、'):'')+'</div></div><button class="btn btn-d" onclick="editp('+p.id+')">编辑</button><button class="btn btn-d" onclick="delp('+p.id+')">✕</button></div>'});
-h+='</div>';document.getElementById('cStats').innerHTML=h;
-}
+[...ps].reverse().slice(0,5).forEach(p=>{const days3=Math.round((new Date(p.endDate||p.startDate)-new Date(p.startDate))/86400000)+1;h+='<div class="pli'+(p.id===_flashId?' flash-in':'')+'"><div class="pdb"></div><div style="flex:1"><div style="font-size:12px;font-weight:500">'+p.startDate+(p.endDate!==p.startDate?' ~ '+p.endDate:'')+' ('+days3+'天)</div><div style="font-size:10px;color:var(--t2)">'+fv[p.flow||'medium']+((p.symptoms||[]).length?' · '+p.symptoms.map(s=>sv[s]||s).join('、'):'')+'</div></div><button class="btn btn-d" onclick="editp('+p.id+')">编辑</button><button class="btn btn-d" onclick="delp('+p.id+')">✕</button></div>'});
+h+='</div>';document.getElementById('cStats').innerHTML=h;if(_flashId){setTimeout(()=>{_flashId=null},1200)}
+	}
 function editp(id){const p=D.pd.find(x=>x.id===id);if(!p)return;document.getElementById('pStart').value=p.startDate;document.getElementById('pEnd').value=p.endDate||'';setSelVal('pFlow',p.flow||'medium');document.getElementById('pNotes').value=p.notes||'';ssym=p.symptoms?[...p.symptoms]:[];document.querySelectorAll('#stags .stag').forEach(t=>t.classList.toggle('sel',ssym.includes(t.dataset.s)));pid=id;document.getElementById('btnPeriod').style.display='none';document.getElementById('btnUpdPeriod').style.display='';document.getElementById('btnCancelPeriod').style.display=''}
-function delp(id){if(confirm('删除这条经期记录？')){D.pd=D.pd.filter(p=>p.id!==id);sd(D);rc();rd()}}
+function delp(id){const p=D.pd.find(x=>x.id===id);if(!p)return;D.pd=D.pd.filter(x=>x.id!==id);sd(D);rc();rd();undoToast('已删除经期记录',()=>{D.pd.push(p);sd(D);rc();rd()})}
 
 // 历史页辅助：编辑/删除后跳转并刷新
 function editeH(id){nav('ex');setTimeout(()=>edite(id),50)}
-function deleH(id){if(confirm('删除这条运动记录？')){D.ex=D.ex.filter(e=>e.id!==id);sd(D);rd();re();rh()}}
+function deleH(id){const e=D.ex.find(x=>x.id===id);if(!e)return;D.ex=D.ex.filter(x=>x.id!==id);sd(D);rd();re();rh();undoToast('已删除运动记录',()=>{D.ex.push(e);sd(D);rd();re();rh()})}
 function editpH(id){nav('cy');setTimeout(()=>editp(id),50)}
-function delpH(id){if(confirm('删除这条经期记录？')){D.pd=D.pd.filter(p=>p.id!==id);sd(D);rd();rc();rh()}}
+function delpH(id){const p=D.pd.find(x=>x.id===id);if(!p)return;D.pd=D.pd.filter(x=>x.id!==id);sd(D);rd();rc();rh();undoToast('已删除经期记录',()=>{D.pd.push(p);sd(D);rd();rc();rh()})}
 
 let hf='all';
 function rh(filter){if(filter)hf=filter;
-document.querySelectorAll('.hfilt .fchip').forEach(c=>c.classList.toggle('act',c.dataset.filter===hf));
-const items=[];if(hf==='all'||hf==='exercise')D.ex.forEach(e=>items.push({...e,it:'ex'}));
-if(hf==='all'||hf==='cycle')D.pd.forEach(p=>items.push({...p,it:'pd'}));
-items.sort((a,b)=>new Date(b.date||b.startDate)-new Date(a.date||a.startDate));
+	// 点击"全部"时清除日期范围
+	if(filter==='all'){const df=document.getElementById('hDateFrom'),dt=document.getElementById('hDateTo');if(df)df.value='';if(dt)dt.value=''}
+	document.querySelectorAll('.hfilt .fchip').forEach(c=>c.classList.toggle('act',c.dataset.filter===hf));
+	const items=[];if(hf==='all'||hf==='exercise')D.ex.forEach(e=>items.push({...e,it:'ex'}));
+	if(hf==='all'||hf==='cycle')D.pd.forEach(p=>items.push({...p,it:'pd'}));
+	// 日期范围过滤
+	const df=document.getElementById('hDateFrom')?.value,dt=document.getElementById('hDateTo')?.value;
+	if(df||dt){
+		const from=df?new Date(df):null,to=dt?new Date(dt):null;
+		if(to)to.setHours(23,59,59); // 包含当天
+		for(let i=items.length-1;i>=0;i--){
+			const d=new Date(items[i].date||items[i].startDate);
+			if(from&&d<from){items.splice(i,1);continue}
+			if(to&&d>to){items.splice(i,1);continue}
+		}
+	}
+	items.sort((a,b)=>new Date(b.date||b.startDate)-new Date(a.date||a.startDate));
 const el=document.getElementById('timeline');
 if(items.length===0){el.innerHTML='<div class="emp"><div class="eic">📋</div><p>暂无记录</p></div>';return}
 	el.innerHTML=items.map(r=>{if(r.it==='pd')return '<div class="ti"><div class="td">'+r.startDate+(r.endDate!==r.startDate?' ~ '+r.endDate:'')+'</div><div class="tc"><h4>🌸 经期</h4><p>流量: '+fv[r.flow||'medium']+((r.symptoms||[]).length?' · '+r.symptoms.map(s=>sv[s]||s).join('、'):'')+(r.notes?' · '+r.notes:'')+'</p></div><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><button class="btn btn-d" onclick="editpH('+r.id+')">编辑</button><button class="btn btn-d" onclick="delpH('+r.id+')">✕</button></div></div>';return '<div class="ti"><div class="td">'+r.date+'</div><div class="tc"><h4>'+im[r.type]+' '+(nm[r.type]||(r.customName||'自定义'))+' · '+r.duration+'分钟</h4><p>'+iv[r.intensity||'moderate']+(r.notes?' · '+r.notes:'')+'</p></div><div style="display:flex;gap:6px;align-items:center;flex-shrink:0"><button class="btn btn-d" onclick="editeH('+r.id+')">编辑</button><button class="btn btn-d" onclick="deleH('+r.id+')">✕</button></div></div>'}).join('');
