@@ -363,6 +363,33 @@ cursor:pointer;transition:all var(--e1);background:var(--gls1);color:var(--t2);f
 [data-theme=colorful] .sv.cy{text-shadow:0 0 40px rgba(255,77,109,0.5)}
 [data-theme=colorful] .sv.wm{text-shadow:0 0 40px rgba(255,179,64,0.4)}
 
+/* Mint Liquid Glass Theme */
+[data-theme=mint]{--bg:#0f1a17;--gls1:rgba(168,230,207,0.07);--gls2:rgba(168,230,207,0.10);--gls3:rgba(168,230,207,0.13);--gls-card:rgba(168,230,207,0.04);--gls-side:rgba(168,230,207,0.035);--gb:rgba(168,230,207,0.10);--gb-focus:rgba(168,230,207,0.20);--gsh:0 4px 24px rgba(0,0,0,0.35),0 1px 4px rgba(0,0,0,0.25);--gsh-lift:0 12px 40px rgba(0,0,0,0.45),0 2px 8px rgba(0,0,0,0.3);--t1:#e8f5f0;--t2:#8aaba0;--t3:#5a7a6e;--ex:#4ce6a0;--exs:rgba(76,230,160,0.18);--exg:rgba(76,230,160,0.4);--cy:#ff6b7d;--cys:rgba(255,107,125,0.18);--cyg:rgba(255,107,125,0.4);--wm:#ffb84d;--ov:rgba(120,200,180,0.55);--p1:#ff6b7d;--p2:#ffb84d;--p3:#4ce6a0;--p4:#7eb8da;--p5:#7ed4cf}
+[data-theme=mint] .bg-wallpaper{background:radial-gradient(ellipse 90% 70% at 15% 15%,rgba(100,200,170,0.18),transparent 55%),radial-gradient(ellipse 80% 60% at 85% 85%,rgba(80,180,160,0.12),transparent 55%),radial-gradient(ellipse 100% 50% at 50% 50%,rgba(60,150,130,0.15),transparent 70%),linear-gradient(175deg,#0f1f1a 0%,#0d1c18 30%,#0e1d19 60%,#101f1c 100%)!important}
+[data-theme=mint] .bg-wallpaper::before{background:radial-gradient(circle 400px at 20% 30%,rgba(120,200,170,0.06),transparent),radial-gradient(circle 350px at 75% 65%,rgba(100,180,160,0.05),transparent),radial-gradient(circle 300px at 50% 20%,rgba(140,210,180,0.04),transparent),radial-gradient(circle 250px at 80% 15%,rgba(160,200,170,0.04),transparent)!important}
+[data-theme=mint] .bg-wallpaper::after{opacity:0.05!important;mix-blend-mode:soft-light!important}
+[data-theme=mint] .card::after{background:linear-gradient(90deg,transparent,rgba(168,230,207,0.06) 30%,rgba(168,230,207,0.10) 50%,rgba(168,230,207,0.06) 70%,transparent)}
+[data-theme=mint] .sv.ex{text-shadow:0 0 30px rgba(76,230,160,0.45)}
+[data-theme=mint] .sv.cy{text-shadow:0 0 30px rgba(255,107,125,0.4)}
+[data-theme=mint] .sv.wm{text-shadow:0 0 30px rgba(255,184,77,0.35)}
+[data-theme=mint] .fi,[data-theme=mint] .fs,[data-theme=mint] .ft{background:rgba(168,230,207,0.06);border-color:rgba(168,230,207,0.12);color:#e8f5f0}
+[data-theme=mint] .fi option,[data-theme=mint] .fs option,[data-theme=mint] .ft option{background:#132520;color:#e8f5f0}
+[data-theme=mint] .cs-trigger{background:rgba(168,230,207,0.06);border-color:rgba(168,230,207,0.12);color:#e8f5f0}
+[data-theme=mint] .cs-drop{background:rgba(15,26,23,0.9);border-color:rgba(168,230,207,0.12);box-shadow:0 12px 40px rgba(0,0,0,0.5),inset 0 1px 0 rgba(168,230,207,0.05)}
+[data-theme=mint] .cs-opt:hover{background:rgba(168,230,207,0.08)}
+[data-theme=mint] .cs-opt.sel{color:#4ce6a0}
+[data-theme=mint] .ibtn{background:rgba(168,230,207,0.05);border-color:rgba(168,230,207,0.10);color:#8aaba0}
+[data-theme=mint] .ibtn.sel{background:rgba(76,230,160,0.14);border-color:#4ce6a0;color:#4ce6a0}
+[data-theme=mint] .exi{background:rgba(168,230,207,0.04)}
+[data-theme=mint] .exi:hover{background:rgba(168,230,207,0.10)}
+[data-theme=mint] .stag{background:rgba(168,230,207,0.05);border-color:rgba(168,230,207,0.10)}
+[data-theme=mint] .fchip{background:rgba(168,230,207,0.05);border-color:rgba(168,230,207,0.10)}
+[data-theme=mint] .pli{background:rgba(168,230,207,0.04)}
+[data-theme=mint] .side-ft{border-top-color:rgba(168,230,207,0.08)}
+[data-theme=mint] .ti{border-bottom-color:rgba(168,230,207,0.06)}
+[data-theme=mint] .login-overlay{background:radial-gradient(ellipse 90% 70% at 15% 15%,rgba(100,200,170,0.18),transparent 55%),radial-gradient(ellipse 80% 60% at 85% 85%,rgba(80,180,160,0.12),transparent 55%),linear-gradient(175deg,#0f1f1a 0%,#0d1c18 30%,#0e1d19 60%,#101f1c 100%)!important}
+[data-theme=mint] input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.85) sepia(0.3) hue-rotate(100deg)}
+
 
 .tbtn{width:28px;height:28px;border-radius:50%;border:1px solid var(--gb);background:var(--gls1);cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;transition:all var(--e1);padding:0;line-height:1}
 .tbtn:hover{background:var(--gls2);border-color:var(--gb-focus)}
@@ -488,6 +515,7 @@ display:flex;align-items:center;gap:4px;font-size:12px;
 <button class="tbtn active" data-t="dark" title="暗色模式">🌙</button>
 <button class="tbtn" data-t="light" title="亮色模式">☀️</button>
 <button class="tbtn" data-t="colorful" title="彩色模式">🌈</button>
+<button class="tbtn" data-t="mint" title="薄荷绿">🍃</button>
 </div>
 <button class="logout-btn" id="logoutBtn">🔒 退出登录</button>
 <button class="logout-btn" id="settingsBtn">⚙️ 同步设置</button>
@@ -652,11 +680,11 @@ function initLogin(){
 	safeOn('mbLogout','click',()=>{try{localStorage.removeItem(AUTH_KEY)}catch(e){}showLogin()});
 	safeOn('mbSync','click',()=>{const inp=byId('tokenInput');if(inp){inp.value=getToken();showTokenSetup()}});
 	safeOn('mbTheme','click',()=>{
-		const t=document.documentElement.getAttribute('data-theme');
-		const next=t==='dark'?'light':t==='light'?'colorful':'dark';
-		document.documentElement.setAttribute('data-theme',next);
-		localStorage.setItem('luna_theme',next);
-	});
+			const t=document.documentElement.getAttribute('data-theme');
+			const next=t==='dark'?'light':t==='light'?'colorful':t==='colorful'?'mint':'dark';
+			document.documentElement.setAttribute('data-theme',next);
+			localStorage.setItem('luna_theme',next);
+		});
 	if(isAuthed())enterApp();else showLogin();
 }
 initLogin();
